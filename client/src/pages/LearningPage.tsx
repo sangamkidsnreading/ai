@@ -93,15 +93,31 @@ export default function LearningPage() {
 
   // Play all function - 10개 단어를 각각 3번씩 읽기
   const handlePlayAll = () => {
+    console.log('Start 버튼 클릭됨');
+    
     if (isPlaying) {
+      console.log('재생 중단');
       speechSynthesis.cancel();
       setIsPlaying(false);
       setCurrentPlayingId(null);
       return;
     }
 
+    console.log('재생 시작');
     setIsPlaying(true);
     const items = activeSection === 'words' ? words.slice(0, 10) : sentences.slice(0, 10); // 10개만 선택
+    console.log('재생할 아이템들:', items);
+    
+    if (items.length === 0) {
+      console.log('재생할 단어가 없음');
+      setIsPlaying(false);
+      toast({
+        title: "알림",
+        description: "재생할 단어가 없습니다.",
+      });
+      return;
+    }
+
     let currentIndex = 0;
     let repeatCount = 0;
     const maxRepeats = 3; // 각 단어를 3번씩 읽기
@@ -109,12 +125,25 @@ export default function LearningPage() {
     const playNext = () => {
       if (currentIndex < items.length && isPlaying) {
         const item = items[currentIndex];
+        console.log(`재생 중: ${item.text} (${repeatCount + 1}/${maxRepeats})`);
         setCurrentPlayingId(item.id.toString());
+        
+        // Speech synthesis 지원 확인
+        if (!('speechSynthesis' in window)) {
+          console.error('Speech synthesis not supported');
+          toast({
+            title: "오류",
+            description: "음성 합성이 지원되지 않는 브라우저입니다.",
+          });
+          setIsPlaying(false);
+          return;
+        }
         
         const utterance = new SpeechSynthesisUtterance(item.text);
         utterance.rate = 0.8;
         utterance.lang = 'en-US';
         utterance.onend = () => {
+          console.log(`음성 재생 완료: ${item.text}`);
           repeatCount++;
           
           if (repeatCount < maxRepeats) {
@@ -132,6 +161,7 @@ export default function LearningPage() {
               if (currentIndex < items.length && isPlaying) {
                 playNext();
               } else {
+                console.log('모든 단어 재생 완료');
                 setIsPlaying(false);
                 setCurrentPlayingId(null);
                 toast({
@@ -142,6 +172,13 @@ export default function LearningPage() {
             }, 1000);
           }
         };
+        
+        utterance.onerror = (event) => {
+          console.error('Speech synthesis error:', event);
+          setIsPlaying(false);
+          setCurrentPlayingId(null);
+        };
+        
         speechSynthesis.speak(utterance);
       }
     };
