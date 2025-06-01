@@ -91,7 +91,7 @@ export default function LearningPage() {
     }
   };
 
-  // Play all function
+  // Play all function - 10개 단어를 각각 3번씩 읽기
   const handlePlayAll = () => {
     if (isPlaying) {
       speechSynthesis.cancel();
@@ -101,8 +101,10 @@ export default function LearningPage() {
     }
 
     setIsPlaying(true);
-    const items = activeSection === 'words' ? words : sentences;
+    const items = activeSection === 'words' ? words.slice(0, 10) : sentences.slice(0, 10); // 10개만 선택
     let currentIndex = 0;
+    let repeatCount = 0;
+    const maxRepeats = 3; // 각 단어를 3번씩 읽기
 
     const playNext = () => {
       if (currentIndex < items.length && isPlaying) {
@@ -113,15 +115,32 @@ export default function LearningPage() {
         utterance.rate = 0.8;
         utterance.lang = 'en-US';
         utterance.onend = () => {
-          currentIndex++;
-          setTimeout(() => {
-            if (currentIndex < items.length && isPlaying) {
-              playNext();
-            } else {
-              setIsPlaying(false);
-              setCurrentPlayingId(null);
-            }
-          }, 1000);
+          repeatCount++;
+          
+          if (repeatCount < maxRepeats) {
+            // 같은 단어를 다시 읽기 (0.5초 간격)
+            setTimeout(() => {
+              if (isPlaying) {
+                playNext();
+              }
+            }, 500);
+          } else {
+            // 다음 단어로 이동
+            repeatCount = 0;
+            currentIndex++;
+            setTimeout(() => {
+              if (currentIndex < items.length && isPlaying) {
+                playNext();
+              } else {
+                setIsPlaying(false);
+                setCurrentPlayingId(null);
+                toast({
+                  title: "학습 완료!",
+                  description: `${items.length}개의 ${activeSection === 'words' ? '단어' : '문장'}를 모두 학습했습니다.`,
+                });
+              }
+            }, 1000);
+          }
         };
         speechSynthesis.speak(utterance);
       }
