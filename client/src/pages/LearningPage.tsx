@@ -123,6 +123,8 @@ export default function LearningPage() {
     const maxRepeats = 3; // 각 단어를 3번씩 읽기
 
     const playNext = () => {
+      console.log(`playNext 호출됨 - currentIndex: ${currentIndex}, isPlaying: ${isPlaying}, items.length: ${items.length}`);
+      
       if (currentIndex < items.length && isPlaying) {
         const item = items[currentIndex];
         console.log(`재생 중: ${item.text} (${repeatCount + 1}/${maxRepeats})`);
@@ -139,50 +141,68 @@ export default function LearningPage() {
           return;
         }
         
-        const utterance = new SpeechSynthesisUtterance(item.text);
-        utterance.rate = 0.8;
-        utterance.lang = 'en-US';
-        utterance.onend = () => {
-          console.log(`음성 재생 완료: ${item.text}`);
-          repeatCount++;
+        // 음성이 준비될 때까지 잠시 대기
+        setTimeout(() => {
+          const utterance = new SpeechSynthesisUtterance(item.text);
+          utterance.rate = 0.8;
+          utterance.lang = 'en-US';
           
-          if (repeatCount < maxRepeats) {
-            // 같은 단어를 다시 읽기 (0.5초 간격)
-            setTimeout(() => {
-              if (isPlaying) {
-                playNext();
-              }
-            }, 500);
-          } else {
-            // 다음 단어로 이동
-            repeatCount = 0;
-            currentIndex++;
-            setTimeout(() => {
-              if (currentIndex < items.length && isPlaying) {
-                playNext();
-              } else {
-                console.log('모든 단어 재생 완료');
-                setIsPlaying(false);
-                setCurrentPlayingId(null);
-                toast({
-                  title: "학습 완료!",
-                  description: `${items.length}개의 ${activeSection === 'words' ? '단어' : '문장'}를 모두 학습했습니다.`,
-                });
-              }
-            }, 1000);
-          }
-        };
-        
-        utterance.onerror = (event) => {
-          console.error('Speech synthesis error:', event);
-          setIsPlaying(false);
-          setCurrentPlayingId(null);
-        };
-        
-        speechSynthesis.speak(utterance);
+          utterance.onstart = () => {
+            console.log(`음성 시작: ${item.text}`);
+          };
+          
+          utterance.onend = () => {
+            console.log(`음성 재생 완료: ${item.text}`);
+            repeatCount++;
+            
+            if (repeatCount < maxRepeats) {
+              // 같은 단어를 다시 읽기 (0.5초 간격)
+              setTimeout(() => {
+                if (isPlaying) {
+                  playNext();
+                }
+              }, 500);
+            } else {
+              // 다음 단어로 이동
+              repeatCount = 0;
+              currentIndex++;
+              setTimeout(() => {
+                if (currentIndex < items.length && isPlaying) {
+                  playNext();
+                } else {
+                  console.log('모든 단어 재생 완료');
+                  setIsPlaying(false);
+                  setCurrentPlayingId(null);
+                  toast({
+                    title: "학습 완료!",
+                    description: `${items.length}개의 ${activeSection === 'words' ? '단어' : '문장'}를 모두 학습했습니다.`,
+                  });
+                }
+              }, 1000);
+            }
+          };
+          
+          utterance.onerror = (event) => {
+            console.error('Speech synthesis error:', event);
+            toast({
+              title: "오류",
+              description: "음성 재생 중 오류가 발생했습니다.",
+            });
+            setIsPlaying(false);
+            setCurrentPlayingId(null);
+          };
+          
+          console.log('speechSynthesis.speak 호출');
+          speechSynthesis.speak(utterance);
+        }, 100);
+      } else {
+        console.log('playNext 조건 실패 - 재생 종료');
+        setIsPlaying(false);
+        setCurrentPlayingId(null);
       }
     };
 
+    console.log('playNext 함수 호출 시작');
     playNext();
   };
 
