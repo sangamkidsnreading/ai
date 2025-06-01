@@ -1,0 +1,172 @@
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  Home, 
+  BarChart3, 
+  User, 
+  Shield, 
+  Search, 
+  Moon, 
+  LogOut, 
+  Zap,
+  Calendar
+} from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { useLearningStore } from '@/stores/learningStore';
+
+interface SidebarProps {
+  activeSection: string;
+  onSectionChange: (section: string) => void;
+}
+
+export default function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
+  const { currentUser, logout } = useAuthStore();
+  const { dayProgress, userStats } = useLearningStore();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLevel, setSelectedLevel] = useState('');
+
+  const navigationItems = [
+    { id: 'learning', label: '학습하기', icon: Home, number: '1' },
+    { id: 'dashboard', label: '대시보드', icon: BarChart3, number: '2' },
+    { id: 'profile', label: '프로필', icon: User, number: '3' },
+    ...(currentUser?.role === 'admin' ? [{ id: 'admin', label: '관리자', icon: Shield, number: '4' }] : []),
+  ];
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  const recentDays = dayProgress.slice(-3).reverse();
+
+  return (
+    <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-40 flex flex-col font-korean">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-lg">키</span>
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-800">키리보카</h1>
+            <p className="text-sm text-gray-600">{currentUser?.name}</p>
+          </div>
+        </div>
+        
+        {/* Theme Toggle */}
+        <button className="flex items-center gap-2 w-full p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+          <Moon className="w-4 h-4" />
+          <span className="text-sm">다크모드</span>
+        </button>
+      </div>
+
+      {/* Search and Filter */}
+      <div className="p-4 border-b border-gray-200">
+        <div className="relative mb-3">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input 
+            type="text" 
+            placeholder="Search words..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+          />
+        </div>
+        <select 
+          value={selectedLevel}
+          onChange={(e) => setSelectedLevel(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+        >
+          <option value="">Select Level</option>
+          <option value="1">Level 1</option>
+          <option value="2">Level 2</option>
+          <option value="3">Level 3</option>
+        </select>
+      </div>
+
+      {/* Navigation Menu */}
+      <nav className="flex-1 p-4">
+        <div className="space-y-2">
+          {navigationItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeSection === item.id;
+            
+            return (
+              <motion.button
+                key={item.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => onSectionChange(item.id)}
+                className={`flex items-center gap-3 w-full p-3 rounded-lg transition-all font-medium ${
+                  isActive
+                    ? 'bg-green-500 text-white shadow-lg'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span>{item.label}</span>
+                <span className={`ml-auto text-xs px-2 py-1 rounded-full ${
+                  isActive 
+                    ? 'bg-white bg-opacity-20' 
+                    : 'bg-gray-200'
+                }`}>
+                  {item.number}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Day Kiri Coin */}
+      <div className="p-4 border-t border-gray-200">
+        <h3 className="font-semibold text-gray-800 mb-3">Day Kiri Coin</h3>
+        <div className="space-y-2">
+          {recentDays.map((day, index) => (
+            <div 
+              key={day.day}
+              className={`flex items-center justify-between p-2 rounded-lg ${
+                index === 0 ? 'bg-green-500 text-white' : 'bg-gray-100'
+              }`}
+            >
+              <span className="text-sm font-medium">Day {day.day}</span>
+              <span className="text-sm font-bold">{day.coinsEarned}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Total KiriCoin */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="gradient-bg rounded-xl p-4 text-white">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-bold">Total KiriCoin</h3>
+            <Zap className="text-yellow-300 w-5 h-5" />
+          </div>
+          <div className="text-3xl font-bold">{userStats.totalCoins}</div>
+          <div className="text-sm opacity-90">Level {userStats.currentLevel}</div>
+        </div>
+      </div>
+
+      {/* Streak */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="bg-orange-100 rounded-lg p-3 text-center">
+          <div className="text-orange-600 font-semibold flex items-center justify-center gap-2">
+            <Calendar className="w-4 h-4" />
+            {userStats.streak}일 연속 학습
+          </div>
+        </div>
+      </div>
+
+      {/* Logout */}
+      <div className="p-4 border-t border-gray-200">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-3 w-full p-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+        >
+          <LogOut className="w-5 h-5" />
+          <span className="font-medium">로그아웃</span>
+        </button>
+      </div>
+    </div>
+  );
+}
