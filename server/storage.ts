@@ -192,168 +192,191 @@ export class DatabaseStorage implements IStorage {
 
   // Word methods
   async getAllWords(): Promise<Word[]> {
-    return Array.from(this.words.values());
+    return await db.select().from(words);
   }
 
   async getWord(id: number): Promise<Word | undefined> {
-    return this.words.get(id);
+    const [word] = await db.select().from(words).where(eq(words.id, id));
+    return word || undefined;
   }
 
   async createWord(insertWord: InsertWord): Promise<Word> {
-    const id = this.currentWordId++;
-    const word: Word = {
-      ...insertWord,
-      id,
-      createdAt: new Date(),
-    };
-    this.words.set(id, word);
+    const [word] = await db
+      .insert(words)
+      .values(insertWord)
+      .returning();
     return word;
   }
 
   async updateWord(id: number, updates: Partial<InsertWord>): Promise<Word | undefined> {
-    const word = this.words.get(id);
-    if (!word) return undefined;
-
-    const updatedWord = { ...word, ...updates };
-    this.words.set(id, updatedWord);
-    return updatedWord;
+    const [word] = await db
+      .update(words)
+      .set(updates)
+      .where(eq(words.id, id))
+      .returning();
+    return word || undefined;
   }
 
   async deleteWord(id: number): Promise<boolean> {
-    return this.words.delete(id);
+    const result = await db.delete(words).where(eq(words.id, id));
+    return result.rowCount > 0;
   }
 
   // Sentence methods
   async getAllSentences(): Promise<Sentence[]> {
-    return Array.from(this.sentences.values());
+    return await db.select().from(sentences);
   }
 
   async getSentence(id: number): Promise<Sentence | undefined> {
-    return this.sentences.get(id);
+    const [sentence] = await db.select().from(sentences).where(eq(sentences.id, id));
+    return sentence || undefined;
   }
 
   async createSentence(insertSentence: InsertSentence): Promise<Sentence> {
-    const id = this.currentSentenceId++;
-    const sentence: Sentence = {
-      ...insertSentence,
-      id,
-      createdAt: new Date(),
-    };
-    this.sentences.set(id, sentence);
+    const [sentence] = await db
+      .insert(sentences)
+      .values(insertSentence)
+      .returning();
     return sentence;
   }
 
   async updateSentence(id: number, updates: Partial<InsertSentence>): Promise<Sentence | undefined> {
-    const sentence = this.sentences.get(id);
-    if (!sentence) return undefined;
-
-    const updatedSentence = { ...sentence, ...updates };
-    this.sentences.set(id, updatedSentence);
-    return updatedSentence;
+    const [sentence] = await db
+      .update(sentences)
+      .set(updates)
+      .where(eq(sentences.id, id))
+      .returning();
+    return sentence || undefined;
   }
 
   async deleteSentence(id: number): Promise<boolean> {
-    return this.sentences.delete(id);
+    const result = await db.delete(sentences).where(eq(sentences.id, id));
+    return result.rowCount > 0;
   }
 
   // User progress methods
   async getUserProgress(userId: number): Promise<UserProgress[]> {
-    return Array.from(this.userProgress.values()).filter(p => p.userId === userId);
+    return await db.select().from(userProgress).where(eq(userProgress.userId, userId));
   }
 
   async updateUserProgress(insertProgress: InsertUserProgress): Promise<UserProgress> {
-    const key = `${insertProgress.userId}-${insertProgress.wordId || 0}-${insertProgress.sentenceId || 0}`;
-    const existing = this.userProgress.get(key);
-    
-    if (existing) {
-      const updated = { ...existing, ...insertProgress };
-      this.userProgress.set(key, updated);
+    // Try to find existing progress
+    const existing = await db.select().from(userProgress).where(
+      eq(userProgress.userId, insertProgress.userId)
+    );
+
+    const matchingProgress = existing.find(p => 
+      p.wordId === (insertProgress.wordId || null) && 
+      p.sentenceId === (insertProgress.sentenceId || null)
+    );
+
+    if (matchingProgress) {
+      const [updated] = await db
+        .update(userProgress)
+        .set(insertProgress)
+        .where(eq(userProgress.id, matchingProgress.id))
+        .returning();
       return updated;
     } else {
-      const id = this.currentProgressId++;
-      const progress: UserProgress = {
-        ...insertProgress,
-        id,
-      };
-      this.userProgress.set(key, progress);
+      const [progress] = await db
+        .insert(userProgress)
+        .values(insertProgress)
+        .returning();
       return progress;
     }
   }
 
   async toggleFavorite(userId: number, wordId?: number, sentenceId?: number): Promise<boolean> {
-    const key = `${userId}-${wordId || 0}-${sentenceId || 0}`;
-    const existing = this.userProgress.get(key);
-    
-    if (existing) {
-      existing.isFavorite = !existing.isFavorite;
-      this.userProgress.set(key, existing);
-      return existing.isFavorite;
+    const existing = await db.select().from(userProgress).where(
+      eq(userProgress.userId, userId)
+    );
+
+    const matchingProgress = existing.find(p => 
+      p.wordId === (wordId || null) && 
+      p.sentenceId === (sentenceId || null)
+    );
+
+    if (matchingProgress) {
+      const [updated] = await db
+        .update(userProgress)
+        .set({ isFavorite: !matchingProgress.isFavorite })
+        .where(eq(userProgress.id, matchingProgress.id))
+        .returning();
+      return updated.isFavorite;
     } else {
-      const id = this.currentProgressId++;
-      const progress: UserProgress = {
-        id,
-        userId,
-        wordId: wordId || null,
-        sentenceId: sentenceId || null,
-        isLearned: false,
-        isFavorite: true,
-        learnedAt: null,
-      };
-      this.userProgress.set(key, progress);
-      return true;
+      const [progress] = await db
+        .insert(userProgress)
+        .values({
+          userId,
+          wordId: wordId || null,
+          sentenceId: sentenceId || null,
+          isLearned: false,
+          isFavorite: true,
+          learnedAt: null,
+        })
+        .returning();
+      return progress.isFavorite;
     }
   }
 
   // Day progress methods
   async getDayProgress(userId: number): Promise<DayProgress[]> {
-    return Array.from(this.dayProgress.values()).filter(p => p.userId === userId);
+    return await db.select().from(dayProgress).where(eq(dayProgress.userId, userId));
   }
 
   async updateDayProgress(insertProgress: InsertDayProgress): Promise<DayProgress> {
-    const key = `${insertProgress.userId}-${insertProgress.day}`;
-    const existing = this.dayProgress.get(key);
-    
-    if (existing) {
-      const updated = { ...existing, ...insertProgress };
-      this.dayProgress.set(key, updated);
+    const existing = await db.select().from(dayProgress).where(
+      eq(dayProgress.userId, insertProgress.userId)
+    );
+
+    const matchingProgress = existing.find(p => p.day === insertProgress.day);
+
+    if (matchingProgress) {
+      const [updated] = await db
+        .update(dayProgress)
+        .set(insertProgress)
+        .where(eq(dayProgress.id, matchingProgress.id))
+        .returning();
       return updated;
     } else {
-      const id = this.currentDayProgressId++;
-      const progress: DayProgress = {
-        ...insertProgress,
-        id,
-      };
-      this.dayProgress.set(key, progress);
+      const [progress] = await db
+        .insert(dayProgress)
+        .values(insertProgress)
+        .returning();
       return progress;
     }
   }
 
   // User stats methods
   async getUserStats(userId: number): Promise<UserStats | undefined> {
-    return this.userStats.get(userId);
+    const [stats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    return stats || undefined;
   }
 
   async updateUserStats(userId: number, updates: Partial<InsertUserStats>): Promise<UserStats> {
-    const existing = this.userStats.get(userId);
+    const existing = await this.getUserStats(userId);
     
     if (existing) {
-      const updated = { ...existing, ...updates };
-      this.userStats.set(userId, updated);
+      const [updated] = await db
+        .update(userStats)
+        .set(updates)
+        .where(eq(userStats.userId, userId))
+        .returning();
       return updated;
     } else {
-      const id = this.currentStatsId++;
-      const stats: UserStats = {
-        id,
-        userId,
-        totalWordsLearned: 0,
-        totalSentencesLearned: 0,
-        totalCoins: 0,
-        currentLevel: 1,
-        streak: 0,
-        lastLoginDate: null,
-        ...updates,
-      };
-      this.userStats.set(userId, stats);
+      const [stats] = await db
+        .insert(userStats)
+        .values({
+          userId,
+          totalWordsLearned: 0,
+          totalSentencesLearned: 0,
+          totalCoins: 0,
+          currentLevel: 1,
+          streak: 0,
+          lastLoginDate: new Date().toISOString().split('T')[0],
+          ...updates,
+        })
+        .returning();
       return stats;
     }
   }
