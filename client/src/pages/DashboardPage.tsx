@@ -381,6 +381,78 @@ export default function DashboardPage() {
           </div>
         </div>
       </motion.div>
+
+      {/* Day by Day Progress */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mt-8 bg-white rounded-xl p-6 shadow-lg"
+      >
+        <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
+          <Calendar size={20} />
+          Day별 학습 진행 상황
+        </h3>
+        
+        {dayProgress.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">
+            <p className="text-lg">아직 학습 기록이 없습니다.</p>
+            <p className="text-sm mt-2">학습을 시작하면 Day별 진행 상황을 확인할 수 있습니다.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {dayProgress
+              .sort((a, b) => b.day - a.day)
+              .slice(0, 12)
+              .map((day, index) => (
+                <motion.div
+                  key={day.day}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    day.day === currentDay
+                      ? 'bg-gradient-to-br from-green-100 to-green-200 border-green-300'
+                      : 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200 hover:border-green-300'
+                  }`}
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="text-lg font-bold text-gray-800">DAY {day.day}</div>
+                    <div className="flex items-center gap-1 bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-sm font-semibold">
+                      <Zap size={14} />
+                      {day.coinsEarned} 코인
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">단어</span>
+                      <span className="font-semibold text-blue-600">{day.wordsLearned}개</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">문장</span>
+                      <span className="font-semibold text-orange-600">{day.sentencesLearned}개</span>
+                    </div>
+                  </div>
+                  
+                  {day.day === currentDay && (
+                    <div className="mt-2 text-xs text-green-600 font-semibold">
+                      오늘의 학습
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+          </div>
+        )}
+        
+        {dayProgress.length > 12 && (
+          <div className="mt-6 text-center">
+            <button className="text-blue-600 hover:text-blue-800 font-semibold text-sm">
+              더 많은 기록 보기 ({dayProgress.length - 12}개 더)
+            </button>
+          </div>
+        )}
+      </motion.div>
     </div>
   );
 }

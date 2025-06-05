@@ -37,8 +37,10 @@ export default function LearningPage() {
   const [currentPlayingId, setCurrentPlayingId] = useState<string | null>(null);
   const [playbackController, setPlaybackController] = useState<{ stop: () => void } | null>(null);
 
-  const currentDayProgress = dayProgress.find(d => d.day === currentDay) || 
-    { day: currentDay, wordsLearned: 0, sentencesLearned: 0, coinsEarned: 0 };
+  // Get progress for the selected day, or current day if no specific day is selected
+  const displayDay = selectedDay > 0 ? selectedDay : currentDay;
+  const currentDayProgress = dayProgress.find(d => d.day === displayDay) || 
+    { day: displayDay, wordsLearned: 0, sentencesLearned: 0, coinsEarned: 0, date: new Date().toISOString() };
 
   // Speech synthesis function
   const speakText = (text: string, times: number = 1) => {
@@ -482,7 +484,9 @@ export default function LearningPage() {
         animate={{ opacity: 1, y: 0 }}
         className="mt-6 bg-white rounded-2xl p-6 shadow-lg"
       >
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">오늘의 학습 진도</h3>
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          {selectedDay > 0 ? `DAY ${selectedDay}` : `DAY ${currentDay}`} 학습 진도
+        </h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center p-4 bg-blue-50 rounded-lg">
             <div className="text-2xl font-bold text-blue-600">{currentDayProgress.wordsLearned}</div>
