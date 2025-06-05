@@ -362,8 +362,8 @@ export default function LearningPage() {
             className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
           >
             {/* Start Button */}
-            <div className="mb-6">
-              <div className="flex justify-end mb-2">
+            <div className="mb-6 flex justify-end">
+              <div className="relative group">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -384,14 +384,17 @@ export default function LearningPage() {
                     </>
                   )}
                 </motion.button>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-600">
-                  {activeSection === 'words' 
-                    ? '각 단어를 3번씩 읽어주며 단어당 10코인이 자동 적립됩니다'
-                    : '각 문장을 3번씩 읽어주며 문장당 3코인이 자동 적립됩니다'
-                  }
-                </p>
+                
+                {/* Tooltip */}
+                <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                  <div className="bg-gray-800 text-white text-sm rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                    {activeSection === 'words' 
+                      ? '각 단어를 3번씩 읽어주며 단어당 10코인이 자동 적립됩니다'
+                      : '각 문장을 3번씩 읽어주며 문장당 3코인이 자동 적립됩니다'
+                    }
+                    <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                  </div>
+                </div>
               </div>
             </div>
 
