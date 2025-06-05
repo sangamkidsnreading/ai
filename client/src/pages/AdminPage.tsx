@@ -284,7 +284,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 p-6 font-korean">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-6 font-korean">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
