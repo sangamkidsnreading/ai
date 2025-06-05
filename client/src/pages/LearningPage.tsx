@@ -304,7 +304,7 @@ export default function LearningPage() {
           onClick={() => setActiveSection('words')}
           className={`flex-1 p-4 rounded-xl font-semibold transition-all ${
             activeSection === 'words'
-              ? 'bg-green-500 text-white shadow-lg'
+              ? 'bg-purple-500 text-white shadow-lg'
               : 'bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
@@ -316,7 +316,7 @@ export default function LearningPage() {
           onClick={() => setActiveSection('sentences')}
           className={`flex-1 p-4 rounded-xl font-semibold transition-all ${
             activeSection === 'sentences'
-              ? 'bg-orange-500 text-white shadow-lg'
+              ? 'bg-purple-500 text-white shadow-lg'
               : 'bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
