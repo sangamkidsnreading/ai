@@ -29,6 +29,8 @@ export default function ProfilePage() {
     notifications: true,
   });
 
+  const [avatarImage, setAvatarImage] = useState<string>('');
+
   useEffect(() => {
     if (currentUser) {
       setFormData({
@@ -38,19 +40,47 @@ export default function ProfilePage() {
         newPassword: '',
         confirmPassword: '',
       });
+      setAvatarImage(currentUser.avatar || '');
       loadUserData();
     }
   }, [currentUser, loadUserData]);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        setAvatarImage(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      // In a real app, this would call an API to update the user profile
-      toast({
-        title: "프로필 업데이트 완료",
-        description: "프로필 정보가 성공적으로 업데이트되었습니다.",
+      const response = await fetch(`/api/users/${currentUser?.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          avatar: avatarImage,
+        }),
       });
+
+      if (response.ok) {
+        toast({
+          title: "프로필 업데이트 완료",
+          description: "프로필 정보가 성공적으로 업데이트되었습니다.",
+        });
+      } else {
+        throw new Error('Update failed');
+      }
     } catch (error) {
       toast({
         title: "업데이트 실패",
@@ -128,6 +158,37 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleProfileUpdate} className="space-y-4">
+                  {/* Avatar Upload */}
+                  <div className="space-y-2">
+                    <Label>프로필 사진</Label>
+                    <div className="flex items-center gap-4">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold text-2xl overflow-hidden">
+                        {avatarImage ? (
+                          <img src={avatarImage} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          currentUser?.name?.charAt(0).toUpperCase() || 'U'
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarChange}
+                          className="hidden"
+                          id="avatar-upload"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => document.getElementById('avatar-upload')?.click()}
+                          className="w-full"
+                        >
+                          사진 변경
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="space-y-2">
                     <Label htmlFor="name">이름</Label>
                     <Input

@@ -9,6 +9,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   role: text("role").notNull().default("student"), // "student" | "admin"
   name: text("name").notNull(),
+  avatar: text("avatar"), // 아바타 이미지 URL 또는 base64
   createdAt: timestamp("created_at").defaultNow(),
 });
 
