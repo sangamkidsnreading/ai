@@ -71,7 +71,7 @@ export default function LearningPage() {
   };
 
   // Speech synthesis function
-  const speakText = (text: string, times: number = 1) => {
+  const speakText = (text: string, times: number = 3, wordId?: number) => {
     if ('speechSynthesis' in window) {
       let count = 0;
       const speak = () => {
@@ -81,6 +81,28 @@ export default function LearningPage() {
           utterance.lang = 'en-US';
           utterance.onend = () => {
             count++;
+            
+            // 1번째 읽기 완료 시 코인과 소리 (개별 클릭)
+            if (count === 1 && wordId) {
+              playCoinSound();
+              addCoinsImmediately(1);
+              
+              toast({
+                title: "학습 완료!",
+                description: `"${text}" 단어를 학습했습니다. +1 코인`,
+              });
+              
+              // 백그라운드에서 서버 처리
+              setTimeout(() => {
+                learnWord(wordId).then(() => {
+                  loadUserData();
+                  console.log(`단어 학습 처리 완료: ${text}`);
+                }).catch(error => {
+                  console.error('단어 학습 처리 오류:', error);
+                });
+              }, 0);
+            }
+            
             if (count < times) {
               setTimeout(speak, 300);
             } else {
@@ -100,17 +122,7 @@ export default function LearningPage() {
     if (currentPlayingId === word.id.toString()) return;
     
     setCurrentPlayingId(word.id.toString());
-    speakText(word.text, 3);
-    
-    if (!word.isLearned) {
-      await learnWord(word.id);
-      await loadUserData(); // 데이터 새로고침
-      playCoinSound();
-      toast({
-        title: "학습 완료!",
-        description: `"${word.text}" 단어를 학습했습니다. +1 코인`,
-      });
-    }
+    speakText(word.text, 3, word.id);
   };
 
   // Sentence click handler
@@ -118,16 +130,49 @@ export default function LearningPage() {
     if (currentPlayingId === sentence.id.toString()) return;
     
     setCurrentPlayingId(sentence.id.toString());
-    speakText(sentence.text, 1);
     
-    if (!sentence.isLearned) {
-      await learnSentence(sentence.id);
-      await loadUserData(); // 데이터 새로고침
-      playCoinSound();
-      toast({
-        title: "학습 완료!",
-        description: `"${sentence.text}" 문장을 학습했습니다. +1 코인`,
-      });
+    if ('speechSynthesis' in window) {
+      let count = 0;
+      const speak = () => {
+        if (count < 3) {
+          const utterance = new SpeechSynthesisUtterance(sentence.text);
+          utterance.rate = 0.8;
+          utterance.lang = 'en-US';
+          utterance.onend = () => {
+            count++;
+            
+            // 1번째 읽기 완료 시 코인과 소리 (개별 클릭)
+            if (count === 1) {
+              playCoinSound();
+              addCoinsImmediately(3);
+              
+              toast({
+                title: "학습 완료!",
+                description: `"${sentence.text}" 문장을 학습했습니다. +3 코인`,
+              });
+              
+              // 백그라운드에서 서버 처리
+              setTimeout(() => {
+                learnSentence(sentence.id).then(() => {
+                  loadUserData();
+                  console.log(`문장 학습 처리 완료: ${sentence.text}`);
+                }).catch(error => {
+                  console.error('문장 학습 처리 오류:', error);
+                });
+              }, 0);
+            }
+            
+            if (count < 3) {
+              setTimeout(speak, 300);
+            } else {
+              setCurrentPlayingId(null);
+            }
+          };
+          speechSynthesis.speak(utterance);
+          count++;
+        }
+      };
+      speak();
     }
   };
 
@@ -243,11 +288,11 @@ export default function LearningPage() {
             if (repeatCount === 1 && activeSection === 'sentences') {
               // 동시에 실행 - 지연 없음
               playCoinSound();
-              addCoinsImmediately(1);
+              addCoinsImmediately(3);
               
               toast({
                 title: "학습 완료!",
-                description: `"${item.text}" 문장을 학습했습니다. +1 코인`,
+                description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
               });
               
               // 백그라운드에서 서버 처리

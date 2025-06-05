@@ -254,7 +254,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (isLearned) {
         const stats = await storage.getUserStats(userId);
         if (stats) {
-          const coinReward = 1; // 단어와 문장 모두 1코인
+          const coinReward = wordId ? 1 : 3; // 단어 1코인, 문장 3코인
           const updates: any = { totalCoins: stats.totalCoins + coinReward };
           if (wordId) updates.totalWordsLearned = stats.totalWordsLearned + 1;
           if (sentenceId) updates.totalSentencesLearned = stats.totalSentencesLearned + 1;
@@ -268,7 +268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         let todayProgress = dayProgressList.find(d => d.date === today && d.day === currentDay);
         if (todayProgress) {
-          const coinReward = 1;
+          const coinReward = wordId ? 1 : 3;
           const updates: any = { 
             coinsEarned: todayProgress.coinsEarned + coinReward,
             date: today
@@ -278,7 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.updateDayProgress({ ...todayProgress, ...updates });
         } else {
           // 오늘의 progress가 없으면 새로 생성
-          const coinReward = 1;
+          const coinReward = wordId ? 1 : 3;
           await storage.updateDayProgress({
             userId,
             day: currentDay,
