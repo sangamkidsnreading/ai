@@ -358,48 +358,63 @@ export default function LearningPage() {
             exit={{ opacity: 0, x: 20 }}
             className="bg-white rounded-2xl p-6 shadow-lg"
           >
-            <h2 className="text-2xl font-bold text-green-600 mb-6">Words In, Power On.</h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-green-600">Words In, Power On.</h2>
+              <div className="text-sm text-gray-600">
+                {selectedLevel > 0 && `Level ${selectedLevel}`}
+                {selectedLevel > 0 && selectedDay > 0 && ' - '}
+                {selectedDay > 0 && `Day ${selectedDay}`}
+                {selectedLevel === 0 && selectedDay === 0 && '모든 단어'}
+              </div>
+            </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {getFilteredWords().map((word) => (
-                <motion.div
-                  key={word.id}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleWordClick(word)}
-                  className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
-                    word.isLearned
-                      ? 'bg-gradient-to-br from-green-100 to-green-200 border-2 border-green-300'
-                      : 'bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 hover:border-green-300'
-                  } ${
-                    currentPlayingId === word.id.toString() ? 'ring-4 ring-green-300' : ''
-                  }`}
-                >
-                  {/* Favorite Button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleFavorite(word.id);
-                    }}
-                    className={`absolute top-2 right-2 p-1 rounded-full transition-colors ${
-                      word.isFavorite ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
+            {getFilteredWords().length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <p className="text-lg">선택한 조건에 해당하는 단어가 없습니다.</p>
+                <p className="text-sm mt-2">다른 레벨이나 Day를 선택해보세요.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {getFilteredWords().map((word) => (
+                  <motion.div
+                    key={word.id}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleWordClick(word)}
+                    className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
+                      word.isLearned
+                        ? 'bg-gradient-to-br from-green-100 to-green-200 border-2 border-green-300'
+                        : 'bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 hover:border-green-300'
+                    } ${
+                      currentPlayingId === word.id.toString() ? 'ring-4 ring-green-300' : ''
                     }`}
                   >
-                    <Heart size={16} fill={word.isFavorite ? 'currentColor' : 'none'} />
-                  </button>
+                    {/* Favorite Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(word.id);
+                      }}
+                      className={`absolute top-2 right-2 p-1 rounded-full transition-colors ${
+                        word.isFavorite ? 'text-red-500' : 'text-gray-400 hover:text-red-500'
+                      }`}
+                    >
+                      <Heart size={16} fill={word.isFavorite ? 'currentColor' : 'none'} />
+                    </button>
 
-                  {/* Level Badge */}
-                  <div className="absolute top-2 left-2 w-6 h-6 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                    {word.level}
-                  </div>
+                    {/* Level Badge */}
+                    <div className="absolute top-2 left-2 w-6 h-6 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                      {word.level}
+                    </div>
 
-                  {/* Word */}
-                  <div className="flex items-center justify-center h-full min-h-[80px]">
-                    <div className="text-2xl font-bold text-gray-800 text-center">{word.text}</div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                    {/* Word */}
+                    <div className="flex items-center justify-center h-full min-h-[80px]">
+                      <div className="text-2xl font-bold text-gray-800 text-center">{word.text}</div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -411,37 +426,52 @@ export default function LearningPage() {
             exit={{ opacity: 0, x: -20 }}
             className="bg-white rounded-2xl p-6 shadow-lg"
           >
-            <h2 className="text-2xl font-bold text-orange-600 mb-6">Create with Words.</h2>
-            
-            <div className="space-y-4">
-              {getFilteredSentences().map((sentence) => (
-                <motion.div
-                  key={sentence.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleSentenceClick(sentence)}
-                  className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
-                    sentence.isLearned
-                      ? 'bg-gradient-to-r from-orange-100 to-yellow-100 border-2 border-orange-300'
-                      : 'bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 hover:border-orange-300'
-                  } ${
-                    currentPlayingId === sentence.id.toString() ? 'ring-4 ring-orange-300' : ''
-                  }`}
-                >
-                  {/* Level Badge */}
-                  <div className="absolute top-4 right-4 w-8 h-8 bg-orange-500 text-white text-sm rounded-full flex items-center justify-center font-bold">
-                    {sentence.level}
-                  </div>
-
-                  {/* Sentence */}
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <div className="text-xl font-semibold text-gray-800">{sentence.text}</div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-orange-600">Create with Words.</h2>
+              <div className="text-sm text-gray-600">
+                {selectedLevel > 0 && `Level ${selectedLevel}`}
+                {selectedLevel > 0 && selectedDay > 0 && ' - '}
+                {selectedDay > 0 && `Day ${selectedDay}`}
+                {selectedLevel === 0 && selectedDay === 0 && '모든 문장'}
+              </div>
             </div>
+            
+            {getFilteredSentences().length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <p className="text-lg">선택한 조건에 해당하는 문장이 없습니다.</p>
+                <p className="text-sm mt-2">다른 레벨이나 Day를 선택해보세요.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {getFilteredSentences().map((sentence) => (
+                  <motion.div
+                    key={sentence.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleSentenceClick(sentence)}
+                    className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
+                      sentence.isLearned
+                        ? 'bg-gradient-to-r from-orange-100 to-yellow-100 border-2 border-orange-300'
+                        : 'bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 hover:border-orange-300'
+                    } ${
+                      currentPlayingId === sentence.id.toString() ? 'ring-4 ring-orange-300' : ''
+                    }`}
+                  >
+                    {/* Level Badge */}
+                    <div className="absolute top-4 right-4 w-8 h-8 bg-orange-500 text-white text-sm rounded-full flex items-center justify-center font-bold">
+                      {sentence.level}
+                    </div>
+
+                    {/* Sentence */}
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <div className="text-xl font-semibold text-gray-800">{sentence.text}</div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
