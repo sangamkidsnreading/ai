@@ -216,13 +216,13 @@ export default function LearningPage() {
             console.log(`음성 재생 완료: ${item.text}`);
             repeatCount++;
             
-            // 3번 읽기 완료 후 학습 처리 및 코인 획득
+            // 3번 읽기 완료 후 학습 처리 및 코인 획득 (즉시 소리 먼저)
             if (repeatCount === maxRepeats && activeSection === 'words') {
+              playCoinSound(); // 소리를 먼저 재생
               try {
                 console.log(`단어 학습 처리 시도: ${item.text}, isLearned: ${item.isLearned}`);
                 await learnWord(item.id);
                 await loadUserData(); // 데이터 새로고침
-                playCoinSound();
                 console.log(`단어 학습 처리 완료: ${item.text}`);
                 toast({
                   title: "학습 완료!",
@@ -233,13 +233,13 @@ export default function LearningPage() {
               }
             }
             
-            // 문장 학습 처리 (1번 읽기 완료 후)
+            // 문장 학습 처리 (1번 읽기 완료 후 즉시 소리)
             if (repeatCount === 1 && activeSection === 'sentences') {
+              playCoinSound(); // 소리를 먼저 재생
               try {
                 console.log(`문장 학습 처리 시도: ${item.text}, isLearned: ${item.isLearned}`);
                 await learnSentence(item.id);
                 await loadUserData(); // 데이터 새로고침
-                playCoinSound();
                 console.log(`문장 학습 처리 완료: ${item.text}`);
                 toast({
                   title: "학습 완료!",
