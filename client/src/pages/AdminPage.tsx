@@ -513,13 +513,51 @@ export default function AdminPage() {
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="wordAudio">음성 파일 URL</Label>
-                      <Input
-                        id="wordAudio"
-                        value={newWord.audioUrl}
-                        onChange={(e) => setNewWord(prev => ({ ...prev, audioUrl: e.target.value }))}
-                        placeholder="https://example.com/audio.mp3"
-                      />
+                      <Label htmlFor="wordAudio">음성 파일</Label>
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-sm text-gray-600">파일 업로드</Label>
+                          <Input
+                            type="file"
+                            accept="audio/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                // Create a URL for the uploaded file
+                                const audioUrl = URL.createObjectURL(file);
+                                setNewWord(prev => ({ ...prev, audioUrl }));
+                              }
+                            }}
+                            className="cursor-pointer"
+                          />
+                        </div>
+                        <div className="relative">
+                          <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                          </div>
+                          <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">또는</span>
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-sm text-gray-600">URL 입력</Label>
+                          <Input
+                            id="wordAudio"
+                            value={newWord.audioUrl}
+                            onChange={(e) => setNewWord(prev => ({ ...prev, audioUrl: e.target.value }))}
+                            placeholder="https://example.com/audio.mp3"
+                          />
+                        </div>
+                        {newWord.audioUrl && (
+                          <div className="mt-2">
+                            <Label className="text-sm text-gray-600">미리보기</Label>
+                            <audio controls className="w-full mt-1">
+                              <source src={newWord.audioUrl} type="audio/mpeg" />
+                              Your browser does not support the audio element.
+                            </audio>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <Button
                       onClick={() => createWordMutation.mutate(newWord)}
@@ -611,13 +649,51 @@ export default function AdminPage() {
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="sentenceAudio">음성 파일 URL</Label>
-                      <Input
-                        id="sentenceAudio"
-                        value={newSentence.audioUrl}
-                        onChange={(e) => setNewSentence(prev => ({ ...prev, audioUrl: e.target.value }))}
-                        placeholder="https://example.com/audio.mp3"
-                      />
+                      <Label htmlFor="sentenceAudio">음성 파일</Label>
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-sm text-gray-600">파일 업로드</Label>
+                          <Input
+                            type="file"
+                            accept="audio/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                // Create a URL for the uploaded file
+                                const audioUrl = URL.createObjectURL(file);
+                                setNewSentence(prev => ({ ...prev, audioUrl }));
+                              }
+                            }}
+                            className="cursor-pointer"
+                          />
+                        </div>
+                        <div className="relative">
+                          <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                          </div>
+                          <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">또는</span>
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-sm text-gray-600">URL 입력</Label>
+                          <Input
+                            id="sentenceAudio"
+                            value={newSentence.audioUrl}
+                            onChange={(e) => setNewSentence(prev => ({ ...prev, audioUrl: e.target.value }))}
+                            placeholder="https://example.com/audio.mp3"
+                          />
+                        </div>
+                        {newSentence.audioUrl && (
+                          <div className="mt-2">
+                            <Label className="text-sm text-gray-600">미리보기</Label>
+                            <audio controls className="w-full mt-1">
+                              <source src={newSentence.audioUrl} type="audio/mpeg" />
+                              Your browser does not support the audio element.
+                            </audio>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <Button
                       onClick={() => createSentenceMutation.mutate(newSentence)}
