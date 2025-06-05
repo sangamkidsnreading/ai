@@ -362,27 +362,37 @@ export default function LearningPage() {
             className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
           >
             {/* Start Button */}
-            <div className="mb-6 flex justify-end">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handlePlayAll}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
-                  isPlaying
-                    ? 'bg-red-500 text-white'
-                    : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
-                }`}
-              >
-                {isPlaying ? (
-                  <>
-                    ⏹️ Stop
-                  </>
-                ) : (
-                  <>
-                    ▶️ Start
-                  </>
-                )}
-              </motion.button>
+            <div className="mb-6">
+              <div className="flex justify-end mb-2">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handlePlayAll}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+                    isPlaying
+                      ? 'bg-red-500 text-white'
+                      : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
+                  }`}
+                >
+                  {isPlaying ? (
+                    <>
+                      ⏹️ Stop
+                    </>
+                  ) : (
+                    <>
+                      ▶️ Start
+                    </>
+                  )}
+                </motion.button>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-600">
+                  {activeSection === 'words' 
+                    ? '각 단어를 3번씩 읽어주며 단어당 10코인이 자동 적립됩니다'
+                    : '각 문장을 3번씩 읽어주며 문장당 3코인이 자동 적립됩니다'
+                  }
+                </p>
+              </div>
             </div>
 
             {getFilteredWords().length === 0 ? (
