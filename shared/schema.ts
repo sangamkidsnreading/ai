@@ -16,6 +16,8 @@ export const words = pgTable("words", {
   id: serial("id").primaryKey(),
   text: text("text").notNull(),
   level: integer("level").notNull().default(1),
+  day: integer("day").notNull().default(1),
+  audioUrl: text("audio_url"), // 음성 파일 URL
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -23,6 +25,8 @@ export const sentences = pgTable("sentences", {
   id: serial("id").primaryKey(),
   text: text("text").notNull(),
   level: integer("level").notNull().default(1),
+  day: integer("day").notNull().default(1),
+  audioUrl: text("audio_url"), // 음성 파일 URL
   createdAt: timestamp("created_at").defaultNow(),
 });
 
