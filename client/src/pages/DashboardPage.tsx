@@ -33,6 +33,12 @@ import { useQuery } from '@tanstack/react-query';
 export default function DashboardPage() {
   const { dayProgress, userStats, currentDay } = useLearningStore();
 
+  // Fetch leaderboard data
+  const { data: leaderboard, isLoading: isLeaderboardLoading } = useQuery({
+    queryKey: ['/api/leaderboard'],
+    staleTime: 30000, // 30초 캐시
+  });
+
   // Chart data preparation
   const weeklyData = useMemo(() => {
     const last7Days = dayProgress.slice(-7).map((day) => ({
@@ -321,6 +327,82 @@ export default function DashboardPage() {
             <div className="text-sm opacity-90">획득한 코인</div>
           </div>
         </div>
+      </motion.div>
+
+      {/* 노력왕 전체 랭킹 */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-xl p-6 shadow-lg mb-8"
+      >
+        <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+          <Trophy size={24} className="text-yellow-500" />
+          노력왕 전체 랭킹
+        </h3>
+        
+        {isLeaderboardLoading ? (
+          <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="animate-pulse flex items-center space-x-4 p-4 rounded-lg bg-gray-50">
+                <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </div>
+                <div className="w-16 h-6 bg-gray-200 rounded"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {leaderboard?.map((user, index) => (
+              <motion.div
+                key={user.userId}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className={`flex items-center justify-between p-4 rounded-lg transition-all ${
+                  index < 3 
+                    ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200' 
+                    : 'bg-gray-50 hover:bg-gray-100'
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                    index === 0 ? 'bg-yellow-500 text-white' :
+                    index === 1 ? 'bg-gray-400 text-white' :
+                    index === 2 ? 'bg-orange-600 text-white' :
+                    'bg-blue-500 text-white'
+                  }`}>
+                    {user.rank}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-gray-800">{user.name}</div>
+                    <div className="text-sm text-gray-600">
+                      단어 {user.totalWordsLearned}개 · 문장 {user.totalSentencesLearned}개
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-lg text-yellow-600">{user.totalCoins}코인</div>
+                  {index < 3 && (
+                    <div className="text-xs text-gray-500">
+                      {index === 0 ? '🥇 1등' : index === 1 ? '🥈 2등' : '🥉 3등'}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+            
+            {(!leaderboard || leaderboard.length === 0) && (
+              <div className="text-center py-8 text-gray-500">
+                <Trophy size={48} className="mx-auto mb-4 text-gray-300" />
+                <p>아직 랭킹 데이터가 없습니다.</p>
+                <p className="text-sm">학습을 시작해보세요!</p>
+              </div>
+            )}
+          </div>
+        )}
       </motion.div>
 
       {/* Learning Goals and Motivation */}

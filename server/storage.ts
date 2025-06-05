@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import {
   users,
   words,
@@ -624,7 +624,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(users)
       .leftJoin(userStats, eq(users.id, userStats.userId))
-      .orderBy(desc(userStats.totalCoins))
+      .orderBy(userStats.totalCoins ? desc(userStats.totalCoins) : desc(users.id))
       .limit(10);
 
     return result.map((row, index) => ({
