@@ -349,31 +349,7 @@ export default function LearningPage() {
         </div>
       </div>
 
-      {/* Play Controls */}
-      <div className="flex gap-4 mb-6">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handlePlayAll}
-          className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
-            isPlaying
-              ? 'bg-red-500 text-white'
-              : 'bg-yellow-500 text-white hover:bg-yellow-600'
-          }`}
-        >
-          {isPlaying ? (
-            <>
-              <Square size={20} />
-              Stop
-            </>
-          ) : (
-            <>
-              <Play size={20} />
-              Start
-            </>
-          )}
-        </motion.button>
-      </div>
+
 
       {/* Content Area */}
       <AnimatePresence mode="wait">
@@ -385,8 +361,32 @@ export default function LearningPage() {
             exit={{ opacity: 0, x: 20 }}
             className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
           >
+            {/* Start Button */}
+            <div className="mb-6">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handlePlayAll}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+                  isPlaying
+                    ? 'bg-red-500 text-white'
+                    : 'bg-yellow-500 text-white hover:bg-yellow-600'
+                }`}
+              >
+                {isPlaying ? (
+                  <>
+                    <Square size={20} />
+                    Stop
+                  </>
+                ) : (
+                  <>
+                    <Play size={20} />
+                    Start
+                  </>
+                )}
+              </motion.button>
+            </div>
 
-            
             {getFilteredWords().length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 <p className="text-lg">선택한 조건에 해당하는 단어가 없습니다.</p>
