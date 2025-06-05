@@ -361,7 +361,7 @@ export default function LearningPage() {
             className="bg-white rounded-2xl p-6 shadow-lg"
           >
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-green-600">Words In, Power On.</h2>
+
               <div className="text-sm text-gray-600">
                 {selectedLevel > 0 && `Level ${selectedLevel}`}
                 {selectedLevel > 0 && selectedDay > 0 && ' - '}
@@ -385,10 +385,10 @@ export default function LearningPage() {
                     onClick={() => handleWordClick(word)}
                     className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
                       word.isLearned
-                        ? 'bg-gradient-to-br from-yellow-200 to-yellow-300'
-                        : 'bg-gradient-to-br from-yellow-100 to-yellow-200'
+                        ? 'bg-gradient-to-br from-amber-50 to-amber-100'
+                        : 'bg-gradient-to-br from-orange-50 to-orange-100'
                     } ${
-                      currentPlayingId === word.id.toString() ? 'ring-4 ring-yellow-300' : ''
+                      currentPlayingId === word.id.toString() ? 'ring-4 ring-orange-200' : ''
                     }`}
                   >
                     {/* Favorite Button */}
