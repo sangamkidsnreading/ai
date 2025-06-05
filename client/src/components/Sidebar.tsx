@@ -28,8 +28,8 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
     { id: 'learning', label: '학습하기', icon: Home, number: '1' },
     { id: 'dashboard', label: '대시보드', icon: BarChart3, number: '2' },
     { id: 'profile', label: '프로필', icon: User, number: '3' },
-    { id: 'logout', label: '로그아웃', icon: LogOut, number: '4' },
-    ...(currentUser?.role === 'admin' ? [{ id: 'admin', label: '관리자', icon: Shield, number: '5' }] : []),
+    ...(currentUser?.role === 'admin' ? [{ id: 'admin', label: '관리자', icon: Shield, number: '4' }] : []),
+    { id: 'logout', label: '로그아웃', icon: LogOut, number: currentUser?.role === 'admin' ? '5' : '4' },
   ];
 
   const handleLogout = () => {
