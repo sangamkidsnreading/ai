@@ -34,7 +34,7 @@ export default function DashboardPage() {
   const { dayProgress, userStats, currentDay } = useLearningStore();
 
   // Fetch leaderboard data
-  const { data: leaderboard, isLoading: isLeaderboardLoading } = useQuery({
+  const { data: leaderboard = [], isLoading: isLeaderboardLoading } = useQuery({
     queryKey: ['/api/leaderboard'],
     staleTime: 30000, // 30초 캐시
   });
@@ -355,7 +355,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {leaderboard?.map((user, index) => (
+            {(leaderboard as any[])?.map((user: any, index: number) => (
               <motion.div
                 key={user.userId}
                 initial={{ opacity: 0, x: -20 }}
@@ -394,7 +394,7 @@ export default function DashboardPage() {
               </motion.div>
             ))}
             
-            {(!leaderboard || leaderboard.length === 0) && (
+            {(!leaderboard || (leaderboard as any[]).length === 0) && (
               <div className="text-center py-8 text-gray-500">
                 <Trophy size={48} className="mx-auto mb-4 text-gray-300" />
                 <p>아직 랭킹 데이터가 없습니다.</p>

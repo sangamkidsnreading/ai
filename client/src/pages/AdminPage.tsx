@@ -345,10 +345,11 @@ export default function AdminPage() {
         className="bg-white rounded-xl shadow-lg"
       >
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="users">사용자 관리</TabsTrigger>
             <TabsTrigger value="words">단어 관리</TabsTrigger>
             <TabsTrigger value="sentences">문장 관리</TabsTrigger>
+            <TabsTrigger value="settings">학습 설정</TabsTrigger>
           </TabsList>
 
           {/* Users Tab */}
@@ -730,6 +731,104 @@ export default function AdminPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </TabsContent>
+
+          {/* Learning Settings Tab */}
+          <TabsContent value="settings" className="p-6">
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-800">학습 설정</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Speech Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>음성 설정</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label>기본 음성 속도</Label>
+                      <select className="w-full mt-1 p-2 border border-gray-300 rounded-md">
+                        <option value="0.5">0.5x (느리게)</option>
+                        <option value="0.8" selected>0.8x (권장)</option>
+                        <option value="1.0">1.0x (보통)</option>
+                        <option value="1.2">1.2x (빠르게)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Label>기본 반복 횟수</Label>
+                      <select className="w-full mt-1 p-2 border border-gray-300 rounded-md">
+                        <option value="1">1회</option>
+                        <option value="2">2회</option>
+                        <option value="3" selected>3회 (권장)</option>
+                        <option value="5">5회</option>
+                      </select>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Reward Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>보상 설정</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label>단어 학습 코인</Label>
+                      <Input type="number" defaultValue="1" className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>문장 학습 코인</Label>
+                      <Input type="number" defaultValue="3" className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>연속 학습 보너스</Label>
+                      <Input type="number" defaultValue="5" className="mt-1" />
+                      <p className="text-xs text-gray-500 mt-1">7일 연속 학습 시 추가 코인</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Level Settings */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>레벨 설정</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label>레벨 업 필요 코인</Label>
+                      <Input type="number" defaultValue="100" className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>최대 레벨</Label>
+                      <Input type="number" defaultValue="10" className="mt-1" />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Daily Goals */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>일일 목표</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label>일일 단어 목표</Label>
+                      <Input type="number" defaultValue="10" className="mt-1" />
+                    </div>
+                    <div>
+                      <Label>일일 문장 목표</Label>
+                      <Input type="number" defaultValue="5" className="mt-1" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="flex justify-end">
+                <Button className="bg-green-500 hover:bg-green-600">
+                  설정 저장
+                </Button>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
