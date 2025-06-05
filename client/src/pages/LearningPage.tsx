@@ -12,10 +12,14 @@ export default function LearningPage() {
     dayProgress,
     userStats,
     currentDay,
+    selectedLevel,
+    selectedDay,
     learnWord,
     learnSentence,
     toggleFavorite,
     loadUserData,
+    getFilteredWords,
+    getFilteredSentences,
   } = useLearningStore();
   
   const { currentUser } = useAuthStore();
@@ -357,7 +361,7 @@ export default function LearningPage() {
             <h2 className="text-2xl font-bold text-green-600 mb-6">Words In, Power On.</h2>
             
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {words.map((word) => (
+              {getFilteredWords().map((word) => (
                 <motion.div
                   key={word.id}
                   whileHover={{ scale: 1.05, y: -5 }}
@@ -410,7 +414,7 @@ export default function LearningPage() {
             <h2 className="text-2xl font-bold text-orange-600 mb-6">Create with Words.</h2>
             
             <div className="space-y-4">
-              {sentences.map((sentence) => (
+              {getFilteredSentences().map((sentence) => (
                 <motion.div
                   key={sentence.id}
                   whileHover={{ scale: 1.02 }}

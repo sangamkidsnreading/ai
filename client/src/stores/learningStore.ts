@@ -5,6 +5,7 @@ interface Word {
   id: number;
   text: string;
   level: number;
+  day: number;
   isLearned: boolean;
   isFavorite: boolean;
 }
@@ -13,6 +14,7 @@ interface Sentence {
   id: number;
   text: string;
   level: number;
+  day: number;
   isLearned: boolean;
 }
 
