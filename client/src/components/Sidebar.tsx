@@ -126,35 +126,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
         </div>
       </nav>
 
-      {/* Day Kiri Coin */}
-      <div className="p-4 border-t border-gray-200">
-        <h3 className="font-semibold text-gray-800 mb-3">Day Kiri Coin</h3>
-        <div className="space-y-2">
-          {recentDays.map((day, index) => (
-            <div 
-              key={day.day}
-              className={`flex items-center justify-between p-2 rounded-lg ${
-                index === 0 ? 'bg-green-500 text-white' : 'bg-gray-100'
-              }`}
-            >
-              <span className="text-sm font-medium">Day {day.day}</span>
-              <span className="text-sm font-bold">{day.coinsEarned}</span>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Total KiriCoin */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="gradient-bg rounded-xl p-4 text-white">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-bold">Total KiriCoin</h3>
-            <Zap className="text-yellow-300 w-5 h-5" />
-          </div>
-          <div className="text-3xl font-bold">{userStats.totalCoins}</div>
-          <div className="text-sm opacity-90">Level {userStats.currentLevel}</div>
-        </div>
-      </div>
 
       {/* Streak */}
       <div className="p-4 border-t border-gray-200">
