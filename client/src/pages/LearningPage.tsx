@@ -213,46 +213,52 @@ export default function LearningPage() {
             console.log(`음성 시작: ${item.text}`);
           };
           
-          utterance.onend = async () => {
+          utterance.onend = () => {
             console.log(`음성 재생 완료: ${item.text}`);
             repeatCount++;
             
             // 3번 읽기 완료 후 학습 처리 및 코인 획득 (즉시 소리와 포인트)
             if (repeatCount === maxRepeats && activeSection === 'words') {
-              playCoinSound(); // 소리를 먼저 재생
-              addCoinsImmediately(1); // UI에 즉시 코인 반영
-              
-              // 백그라운드에서 서버 처리
-              learnWord(item.id).then(() => {
-                loadUserData(); // 서버 동기화
-                console.log(`단어 학습 처리 완료: ${item.text}`);
-              }).catch(error => {
-                console.error('단어 학습 처리 오류:', error);
-              });
+              // 동시에 실행 - 지연 없음
+              playCoinSound();
+              addCoinsImmediately(1);
               
               toast({
                 title: "학습 완료!",
                 description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
               });
+              
+              // 백그라운드에서 서버 처리
+              setTimeout(() => {
+                learnWord(item.id).then(() => {
+                  loadUserData();
+                  console.log(`단어 학습 처리 완료: ${item.text}`);
+                }).catch(error => {
+                  console.error('단어 학습 처리 오류:', error);
+                });
+              }, 0);
             }
             
             // 문장 학습 처리 (1번 읽기 완료 후 즉시 소리와 포인트)
             if (repeatCount === 1 && activeSection === 'sentences') {
-              playCoinSound(); // 소리를 먼저 재생
-              addCoinsImmediately(1); // UI에 즉시 코인 반영
-              
-              // 백그라운드에서 서버 처리
-              learnSentence(item.id).then(() => {
-                loadUserData(); // 서버 동기화
-                console.log(`문장 학습 처리 완료: ${item.text}`);
-              }).catch(error => {
-                console.error('문장 학습 처리 오류:', error);
-              });
+              // 동시에 실행 - 지연 없음
+              playCoinSound();
+              addCoinsImmediately(1);
               
               toast({
                 title: "학습 완료!",
                 description: `"${item.text}" 문장을 학습했습니다. +1 코인`,
               });
+              
+              // 백그라운드에서 서버 처리
+              setTimeout(() => {
+                learnSentence(item.id).then(() => {
+                  loadUserData();
+                  console.log(`문장 학습 처리 완료: ${item.text}`);
+                }).catch(error => {
+                  console.error('문장 학습 처리 오류:', error);
+                });
+              }, 0);
             }
             
             if (repeatCount < maxRepeats && playingState) {
