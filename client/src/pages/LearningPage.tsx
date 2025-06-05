@@ -76,7 +76,7 @@ export default function LearningPage() {
       const speak = () => {
         if (count < times) {
           const utterance = new SpeechSynthesisUtterance(text);
-          utterance.rate = 1.2;
+          utterance.rate = 0.8;
           utterance.lang = 'en-US';
           utterance.onend = () => {
             count++;
@@ -107,7 +107,7 @@ export default function LearningPage() {
       playCoinSound();
       toast({
         title: "학습 완료!",
-        description: `"${word.text}" 단어를 학습했습니다. +10 코인`,
+        description: `"${word.text}" 단어를 학습했습니다. +1 코인`,
       });
     }
   };
@@ -125,7 +125,7 @@ export default function LearningPage() {
       playCoinSound();
       toast({
         title: "학습 완료!",
-        description: `"${sentence.text}" 문장을 학습했습니다. +3 코인`,
+        description: `"${sentence.text}" 문장을 학습했습니다. +1 코인`,
       });
     }
   };
@@ -205,7 +205,7 @@ export default function LearningPage() {
           }
           
           const utterance = new SpeechSynthesisUtterance(item.text);
-          utterance.rate = 1.2;
+          utterance.rate = 0.8;
           utterance.lang = 'en-US';
           
           utterance.onstart = () => {
@@ -226,7 +226,7 @@ export default function LearningPage() {
                 console.log(`단어 학습 처리 완료: ${item.text}`);
                 toast({
                   title: "학습 완료!",
-                  description: `"${item.text}" 단어를 학습했습니다. +10 코인`,
+                  description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
                 });
               } catch (error) {
                 console.error('단어 학습 처리 오류:', error);
@@ -243,7 +243,7 @@ export default function LearningPage() {
                 console.log(`문장 학습 처리 완료: ${item.text}`);
                 toast({
                   title: "학습 완료!",
-                  description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
+                  description: `"${item.text}" 문장을 학습했습니다. +1 코인`,
                 });
               } catch (error) {
                 console.error('문장 학습 처리 오류:', error);
