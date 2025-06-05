@@ -320,7 +320,7 @@ export default function LearningPage() {
               : 'bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
-          Create with Words.
+          Create with Sentences.
         </motion.button>
       </div>
 
