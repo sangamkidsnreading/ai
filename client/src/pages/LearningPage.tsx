@@ -450,16 +450,13 @@ export default function LearningPage() {
                     onClick={() => handleSentenceClick(sentence)}
                     className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
                       sentence.isLearned
-                        ? 'bg-gradient-to-r from-orange-100 to-yellow-100 border-2 border-orange-300'
-                        : 'bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 hover:border-orange-300'
+                        ? 'bg-gradient-to-br from-amber-50 to-amber-100'
+                        : 'bg-gradient-to-br from-orange-50 to-orange-100'
                     } ${
-                      currentPlayingId === sentence.id.toString() ? 'ring-4 ring-orange-300' : ''
+                      currentPlayingId === sentence.id.toString() ? 'ring-4 ring-orange-200' : ''
                     }`}
                   >
-                    {/* Level Badge */}
-                    <div className="absolute top-4 right-4 w-8 h-8 bg-orange-500 text-white text-sm rounded-full flex items-center justify-center font-bold">
-                      {sentence.level}
-                    </div>
+
 
                     {/* Sentence */}
                     <div className="flex items-center gap-4">
