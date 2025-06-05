@@ -286,12 +286,18 @@ export default function LearningPage() {
       >
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-gray-600 mb-1">총 획득 코인</p>
-            <h1 className="text-3xl font-bold text-gray-900 mb-1">{userStats.totalCoins}</h1>
-            <p className="text-sm text-green-600 font-medium">+15%</p>
+            <h1 className="text-xl font-bold text-gray-900">LEVEL 1 - Day {currentDay}</h1>
+            <p className="text-sm text-gray-600 mt-1">오늘 학습: 단어 {currentDayProgress.wordsLearned}개, 문장 {currentDayProgress.sentencesLearned}개</p>
           </div>
-          <div className="bg-yellow-500 p-3 rounded-lg">
-            <Zap className="text-white" size={24} />
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-sm text-gray-600 mb-1">오늘 적립 코인</p>
+              <h2 className="text-3xl font-bold text-gray-900 mb-1">{currentDayProgress.coinsEarned}</h2>
+              <p className="text-sm text-green-600 font-medium">+15%</p>
+            </div>
+            <div className="bg-yellow-500 p-3 rounded-lg">
+              <Zap className="text-white" size={24} />
+            </div>
           </div>
         </div>
       </motion.div>
