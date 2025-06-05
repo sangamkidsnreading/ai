@@ -28,6 +28,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { useLearningStore } from '@/stores/learningStore';
+import { useQuery } from '@tanstack/react-query';
 
 export default function DashboardPage() {
   const { dayProgress, userStats, currentDay } = useLearningStore();

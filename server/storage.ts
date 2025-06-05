@@ -57,6 +57,17 @@ export interface IStorage {
   // User stats methods
   getUserStats(userId: number): Promise<UserStats | undefined>;
   updateUserStats(userId: number, updates: Partial<InsertUserStats>): Promise<UserStats>;
+
+  // Leaderboard methods
+  getLeaderboard(): Promise<Array<{
+    userId: number;
+    username: string;
+    name: string;
+    totalCoins: number;
+    totalWordsLearned: number;
+    totalSentencesLearned: number;
+    rank: number;
+  }>>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -599,6 +610,30 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return stats;
     }
+  }
+
+  async getLeaderboard() {
+    const result = await db
+      .select({
+        userId: users.id,
+        username: users.username,
+        name: users.name,
+        totalCoins: userStats.totalCoins,
+        totalWordsLearned: userStats.totalWordsLearned,
+        totalSentencesLearned: userStats.totalSentencesLearned,
+      })
+      .from(users)
+      .leftJoin(userStats, eq(users.id, userStats.userId))
+      .orderBy(desc(userStats.totalCoins))
+      .limit(10);
+
+    return result.map((row, index) => ({
+      ...row,
+      totalCoins: row.totalCoins || 0,
+      totalWordsLearned: row.totalWordsLearned || 0,
+      totalSentencesLearned: row.totalSentencesLearned || 0,
+      rank: index + 1,
+    }));
   }
 }
 
