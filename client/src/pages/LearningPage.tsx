@@ -370,7 +370,7 @@ export default function LearningPage() {
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
                   isPlaying
                     ? 'bg-red-500 text-white'
-                    : 'bg-yellow-500 text-white hover:bg-yellow-600'
+                    : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
                 }`}
               >
                 {isPlaying ? (
