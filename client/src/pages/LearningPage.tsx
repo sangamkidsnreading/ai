@@ -385,15 +385,7 @@ export default function LearningPage() {
             exit={{ opacity: 0, x: 20 }}
             className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
           >
-            <div className="flex justify-between items-center mb-6">
 
-              <div className="text-sm text-gray-600">
-                {selectedLevel > 0 && `Level ${selectedLevel}`}
-                {selectedLevel > 0 && selectedDay > 0 && ' - '}
-                {selectedDay > 0 && `Day ${selectedDay}`}
-                {selectedLevel === 0 && selectedDay === 0 && '모든 단어'}
-              </div>
-            </div>
             
             {getFilteredWords().length === 0 ? (
               <div className="text-center py-12 text-gray-500">
