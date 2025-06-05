@@ -217,8 +217,8 @@ export default function LearningPage() {
             console.log(`음성 재생 완료: ${item.text}`);
             repeatCount++;
             
-            // 2번 읽기 완료 후 학습 처리 및 코인 획득 (즉시 소리와 포인트)
-            if (repeatCount === 2 && activeSection === 'words') {
+            // 1번 읽기 완료 후 학습 처리 및 코인 획득 (즉시 소리와 포인트)
+            if (repeatCount === 1 && activeSection === 'words') {
               // 동시에 실행 - 지연 없음
               playCoinSound();
               addCoinsImmediately(1);
