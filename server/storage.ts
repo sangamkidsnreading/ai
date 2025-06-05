@@ -270,19 +270,64 @@ export class DatabaseStorage implements IStorage {
       p.sentenceId === (insertProgress.sentenceId || null)
     );
 
+    let shouldAwardCoins = false;
+
     if (matchingProgress) {
+      // Check if this is the first time learning (was not learned before)
+      shouldAwardCoins = !matchingProgress.isLearned && insertProgress.isLearned;
+      
       const [updated] = await db
         .update(userProgress)
         .set(insertProgress)
         .where(eq(userProgress.id, matchingProgress.id))
         .returning();
+      
+      // Award coins if this is first time learning
+      if (shouldAwardCoins) {
+        await this.awardCoins(insertProgress.userId, 10); // 10 coins per word
+      }
+      
       return updated;
     } else {
+      // New progress entry - award coins if marking as learned
+      shouldAwardCoins = insertProgress.isLearned;
+      
       const [progress] = await db
         .insert(userProgress)
         .values(insertProgress)
         .returning();
+      
+      // Award coins for new word learned
+      if (shouldAwardCoins) {
+        await this.awardCoins(insertProgress.userId, 10); // 10 coins per word
+      }
+      
       return progress;
+    }
+  }
+
+  private async awardCoins(userId: number, coins: number): Promise<void> {
+    // Ensure user stats exist
+    const existingStats = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    
+    if (existingStats.length === 0) {
+      // Create new user stats with initial coins
+      await db.insert(userStats).values({
+        userId,
+        totalWordsLearned: 0,
+        totalSentencesLearned: 0,
+        totalCoins: coins,
+        currentLevel: 1,
+        streak: 0,
+      });
+    } else {
+      // Update existing stats by adding coins
+      await db
+        .update(userStats)
+        .set({ 
+          totalCoins: existingStats[0].totalCoins + coins 
+        })
+        .where(eq(userStats.userId, userId));
     }
   }
 

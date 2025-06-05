@@ -10,6 +10,7 @@ export default function LearningPage() {
     words,
     sentences,
     dayProgress,
+    userStats,
     currentDay,
     learnWord,
     learnSentence,
@@ -284,7 +285,7 @@ export default function LearningPage() {
           </div>
           <div className="flex items-center gap-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
             <Zap className="text-yellow-300" size={20} />
-            <span className="font-bold">{currentDayProgress.coinsEarned} 코인</span>
+            <span className="font-bold">{userStats.totalCoins} 코인</span>
           </div>
         </div>
       </motion.div>
