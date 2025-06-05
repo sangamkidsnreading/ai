@@ -311,7 +311,7 @@ export default function LearningPage() {
             onClick={() => setActiveSection('words')}
             className={`p-6 rounded-xl transition-all ${
               activeSection === 'words'
-                ? 'bg-purple-100 border-2 border-purple-300'
+                ? 'bg-purple-100'
                 : 'bg-purple-50 hover:bg-purple-100'
             }`}
           >
@@ -332,7 +332,7 @@ export default function LearningPage() {
             onClick={() => setActiveSection('sentences')}
             className={`p-6 rounded-xl transition-all ${
               activeSection === 'sentences'
-                ? 'bg-green-100 border-2 border-green-300'
+                ? 'bg-green-100'
                 : 'bg-green-50 hover:bg-green-100'
             }`}
           >
