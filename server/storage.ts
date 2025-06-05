@@ -284,7 +284,8 @@ export class DatabaseStorage implements IStorage {
       
       // Award coins if this is first time learning
       if (shouldAwardCoins) {
-        await this.awardCoins(insertProgress.userId, 10); // 10 coins per word
+        const coins = insertProgress.wordId ? 10 : 3; // 10 coins per word, 3 coins per sentence
+        await this.awardCoins(insertProgress.userId, coins);
       }
       
       return updated;
@@ -297,9 +298,10 @@ export class DatabaseStorage implements IStorage {
         .values(insertProgress)
         .returning();
       
-      // Award coins for new word learned
+      // Award coins for new word/sentence learned
       if (shouldAwardCoins) {
-        await this.awardCoins(insertProgress.userId, 10); // 10 coins per word
+        const coins = insertProgress.wordId ? 10 : 3; // 10 coins per word, 3 coins per sentence
+        await this.awardCoins(insertProgress.userId, coins);
       }
       
       return progress;
