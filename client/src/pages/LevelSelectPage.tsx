@@ -10,8 +10,15 @@ export default function LevelSelectPage() {
 
   const levels = [
     { id: 1, name: 'Level 1', description: '기초 단어 및 문장', isUnlocked: true },
-    { id: 2, name: 'Level 2', description: '중급 단어 및 문장', isUnlocked: true },
-    { id: 3, name: 'Level 3', description: '고급 단어 및 문장', isUnlocked: false },
+    { id: 2, name: 'Level 2', description: '초급 단어 및 문장', isUnlocked: true },
+    { id: 3, name: 'Level 3', description: '중급 단어 및 문장', isUnlocked: true },
+    { id: 4, name: 'Level 4', description: '중상급 단어 및 문장', isUnlocked: false },
+    { id: 5, name: 'Level 5', description: '고급 단어 및 문장', isUnlocked: false },
+    { id: 6, name: 'Level 6', description: '상급 단어 및 문장', isUnlocked: false },
+    { id: 7, name: 'Level 7', description: '최상급 단어 및 문장', isUnlocked: false },
+    { id: 8, name: 'Level 8', description: '전문가 단어 및 문장', isUnlocked: false },
+    { id: 9, name: 'Level 9', description: '마스터 단어 및 문장', isUnlocked: false },
+    { id: 10, name: 'Level 10', description: '엑스퍼트 단어 및 문장', isUnlocked: false },
   ];
 
   const getDaysForLevel = (levelId: number) => {

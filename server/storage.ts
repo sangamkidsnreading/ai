@@ -87,31 +87,204 @@ export class DatabaseStorage implements IStorage {
           name: "김학습자",
         });
 
-        // Create sample words
+        // Create sample words for 10 levels
         const sampleWords = [
-          { text: "I", level: 1 },
-          { text: "am", level: 1 },
-          { text: "big", level: 1 },
-          { text: "and", level: 1 },
-          { text: "fast", level: 1 },
-          { text: "we", level: 1 },
-          { text: "are", level: 1 },
-          { text: "tall", level: 1 },
-          { text: "you", level: 2 },
-          { text: "they", level: 2 },
+          // Level 1 - Basic words
+          { text: "I", level: 1, day: 1 },
+          { text: "am", level: 1, day: 1 },
+          { text: "big", level: 1, day: 1 },
+          { text: "and", level: 1, day: 1 },
+          { text: "fast", level: 1, day: 1 },
+          { text: "we", level: 1, day: 1 },
+          { text: "are", level: 1, day: 1 },
+          { text: "tall", level: 1, day: 1 },
+          { text: "small", level: 1, day: 1 },
+          { text: "good", level: 1, day: 1 },
+          
+          // Level 2
+          { text: "you", level: 2, day: 1 },
+          { text: "they", level: 2, day: 1 },
+          { text: "have", level: 2, day: 1 },
+          { text: "book", level: 2, day: 1 },
+          { text: "house", level: 2, day: 1 },
+          { text: "water", level: 2, day: 1 },
+          { text: "food", level: 2, day: 1 },
+          { text: "love", level: 2, day: 1 },
+          { text: "happy", level: 2, day: 1 },
+          { text: "friend", level: 2, day: 1 },
+          
+          // Level 3
+          { text: "beautiful", level: 3, day: 1 },
+          { text: "important", level: 3, day: 1 },
+          { text: "different", level: 3, day: 1 },
+          { text: "difficult", level: 3, day: 1 },
+          { text: "interesting", level: 3, day: 1 },
+          { text: "wonderful", level: 3, day: 1 },
+          { text: "exciting", level: 3, day: 1 },
+          { text: "comfortable", level: 3, day: 1 },
+          { text: "successful", level: 3, day: 1 },
+          { text: "experience", level: 3, day: 1 },
+          
+          // Level 4
+          { text: "opportunity", level: 4, day: 1 },
+          { text: "challenge", level: 4, day: 1 },
+          { text: "responsibility", level: 4, day: 1 },
+          { text: "development", level: 4, day: 1 },
+          { text: "environment", level: 4, day: 1 },
+          { text: "international", level: 4, day: 1 },
+          { text: "communication", level: 4, day: 1 },
+          { text: "investigation", level: 4, day: 1 },
+          { text: "relationship", level: 4, day: 1 },
+          { text: "understanding", level: 4, day: 1 },
+          
+          // Level 5
+          { text: "achievement", level: 5, day: 1 },
+          { text: "accomplishment", level: 5, day: 1 },
+          { text: "organization", level: 5, day: 1 },
+          { text: "recommendation", level: 5, day: 1 },
+          { text: "concentration", level: 5, day: 1 },
+          { text: "consideration", level: 5, day: 1 },
+          { text: "transformation", level: 5, day: 1 },
+          { text: "demonstration", level: 5, day: 1 },
+          { text: "administration", level: 5, day: 1 },
+          { text: "determination", level: 5, day: 1 },
+          
+          // Level 6
+          { text: "philosophical", level: 6, day: 1 },
+          { text: "psychological", level: 6, day: 1 },
+          { text: "technological", level: 6, day: 1 },
+          { text: "anthropological", level: 6, day: 1 },
+          { text: "meteorological", level: 6, day: 1 },
+          { text: "chronological", level: 6, day: 1 },
+          { text: "archaeological", level: 6, day: 1 },
+          { text: "physiological", level: 6, day: 1 },
+          { text: "neurological", level: 6, day: 1 },
+          { text: "sociological", level: 6, day: 1 },
+          
+          // Level 7
+          { text: "incomprehensible", level: 7, day: 1 },
+          { text: "indispensable", level: 7, day: 1 },
+          { text: "irresponsible", level: 7, day: 1 },
+          { text: "incontrovertible", level: 7, day: 1 },
+          { text: "uncharacteristic", level: 7, day: 1 },
+          { text: "unconventional", level: 7, day: 1 },
+          { text: "interdisciplinary", level: 7, day: 1 },
+          { text: "counterproductive", level: 7, day: 1 },
+          { text: "unapproachable", level: 7, day: 1 },
+          { text: "unprecedented", level: 7, day: 1 },
+          
+          // Level 8
+          { text: "transcendentalism", level: 8, day: 1 },
+          { text: "phenomenological", level: 8, day: 1 },
+          { text: "epistemological", level: 8, day: 1 },
+          { text: "jurisprudential", level: 8, day: 1 },
+          { text: "institutionalization", level: 8, day: 1 },
+          { text: "compartmentalization", level: 8, day: 1 },
+          { text: "antiestablishment", level: 8, day: 1 },
+          { text: "extraterrestrial", level: 8, day: 1 },
+          { text: "intergovernmental", level: 8, day: 1 },
+          { text: "interconnectedness", level: 8, day: 1 },
+          
+          // Level 9
+          { text: "pseudointellectual", level: 9, day: 1 },
+          { text: "counterrevolutionary", level: 9, day: 1 },
+          { text: "antidisestablishmentarian", level: 9, day: 1 },
+          { text: "pneumonoultramicroscopic", level: 9, day: 1 },
+          { text: "floccinaucinihilipilification", level: 9, day: 1 },
+          { text: "supercalifragilisticexpialidocious", level: 9, day: 1 },
+          { text: "hippopotomonstrosesquippedaliophobia", level: 9, day: 1 },
+          { text: "antidisestablishmentarianism", level: 9, day: 1 },
+          { text: "pseudopseudohypoparathyroidism", level: 9, day: 1 },
+          { text: "immunoelectrophoresis", level: 9, day: 1 },
+          
+          // Level 10
+          { text: "pneumonoultramicroscopicsilicovolcanoconiosislike", level: 10, day: 1 },
+          { text: "methionylthreonylthreonylglutaminylarginyl", level: 10, day: 1 },
+          { text: "lopadotemachoselachogaleokranioleipsanodrimhypotrimmatosilphioparaomelitokatakechymenokichlepikossyphophattoperisteralektryonoptekephalliokigklopeleiolagoiosiraiobaphetraganopterygon", level: 10, day: 1 },
+          { text: "acetylseryltyrosylserylisoleucylthreonylserylprolylserylglutaminylphenylalanylvalylphenylalanylleucylserylserylvalyltryptophylalanylaspartylprolylisoleucylglutamylleucylleucylasparaginylvalylcysteinylthreonylserylserylleucylglycylasparaginylglutaminylphenylalanylglutaminylthreonylglutaminylglutaminylalanylarginylthreonylthreonylglutaminylvalylglutaminylglutaminylphenylalanylserylglutaminylvalyltryptophyllysylprolylphenylalanylprolylglutaminylserylthreonylvalylarginylphenylalanylprolylglycylaspartylvalyltyrosyllysylvalyltyrosylarginyltyrosylasparaginylalanylvalylleucylaspartylprolylleucylisoleucylthreonylalanylleucylleucylglycylthreonylphenylalanylaspartylthreonylarginylasparaginylarginylisoleucylisoleucylglutamylvalylglutamylasparaginylglutaminylglutaminylserylprolylthreonylthreonylalanylglutamylthreonylleucylaspartylalanylthreonylarginylarginylvalylaspartylaspartylalanylthreonylvalylalanylisoleucylarginylserylalanylasparaginylisoleucylasparaginylleucylvalylasparaginylglutamylleucylvalylarginylglycylthreonylglycylleucyltyrosylasparaginylglutaminylasparaginylthreonylphenylalanylglutamylserylmethionylserylglycylleucylvalyltryptophylthreonylserylalanylprolylalanyltitinmethionylglutaminylarginyltyrosylglutamylserylleucylphenylalanylalanylisoleucylcysteinylprolylprolylaspartylalanylaspartylaspartylaspartylleucylleucylarginylglutaminylisoleucylalanylseryltyrosylglycylarginylglycyltyrosylthreonyltyrosylleucylleucylserylarginylalanylglycylvalylthreonylglycylalanylglutamylasparaginylarginylalanylalanylleucylprolylleucylasparaginylhistidylleucylvalylalanyllysylleucyllysylglutamyltyrosylasparaginylalanylalanylprolylprolylleucylglutaminylglycylphenylalanylglycylisoleucylserylalanylprolylaspartylglutaminylvalyllysylalanylalanylisoleucylaspartylalanylglycylalanylalanylglycylalanylisoleucylserylglycylserylalanylisoleucylvalyllysylisoleucylisoleucylglutamylglutaminylhistidylasparaginylisoleucylglutamylprolylglutamyllysylmethionylleucylalanylalanylleucyllysylvalylphenylalanylvalylglutaminylprolylmethionyllysylalanylalanylthreonylarginylacetylseryltyrosylserylisoleucylthreonylserylprolylserylglutaminylphenylalanylvalylphenylalanylleucylserylserylvalyltryptophylalanylaspartylprolylisoleucylglutamylleucylleucylasparaginylvalylcysteinylthreonylserylserylleucylglycylasparaginylglutaminylphenylalanylglutaminylthreonylglutaminylglutaminylalanylarginylthreonylthreonylglutaminylvalylglutaminylglutaminylphenylalanylserylglutaminylvalyltryptophyllysylprolylphenylalanylprolylglutaminylserylthreonylvalylarginylphenylalanylprolylglycylaspartylvalyltyrosyllysylvalyltyrosylarginyltyrosylasparaginylalanylvalylleucylaspartylprolylleucylisoleucylthreonylalanylleucylleucylglycylthreonylphenylalanylaspartylthreonylarginylasparaginylarginylisoleucylisoleucylglutamylvalylglutamylasparaginylglutaminylglutaminylserylprolylthreonylthreonylalanylglutamylthreonylleucylaspartylalanylthreonylarginylarginylvalylaspartylaspartylalanylthreonylvalylalanylisoleucylarginylserylalanylasparaginylisoleucylasparaginylleucylvalylasparaginylglutamylleucylvalylarginylglycylthreonylglycylleucyltyrosylasparaginylglutaminylasparaginylthreonylphenylalanylglutamylserylmethionylserylglycylleucylvalyltryptophylthreonylserylalanylprolylalanyltitinmethionylglutaminylarginyltyrosylglutamylserylleucylphenylalanylalanylisoleucylcysteinylprolylprolylaspartylalanylaspartylaspartylaspartylleucylleucylarginylglutaminylisoleucylalanylseryltyrosylglycylarginylglycyltyrosylthreonyltyrosylleucylleucylserylarginylalanylglycylvalylthreonylglycylalanylglutamylasparaginylarginylalanylalanylleucylprolylleucylasparaginylhistidylleucylvalylalanyllysylleucyllysylglutamyltyrosylasparaginylalanylalanylprolylprolylleucylglutaminylglycylphenylalanylglycylisoleucylserylalanylprolylaspartylglutaminylvalyllysylalanylalanylisoleucylaspartylalanylglycylalanylalanylglycylalanylisoleucylserylglycylserylalanylisoleucylvalyllysylisoleucylisoleucylglutamylglutaminylhistidylasparaginylisoleucylglutamylprolylglutamyllysylmethionylleucylalanylalanylleucyllysylvalylphenylalanylvalylglutaminylprolylmethionyllysylalanylalanylthreonylarginylserine", level: 10, day: 1 },
+          { text: "supercalifragilisticexpialidociously", level: 10, day: 1 },
+          { text: "antipsychopharmacological", level: 10, day: 1 },
+          { text: "microspectrophotometrically", level: 10, day: 1 },
+          { text: "tetraiodophenolphthalein", level: 10, day: 1 },
+          { text: "spectrophotometrically", level: 10, day: 1 },
+          { text: "electroencephalograph", level: 10, day: 1 },
         ];
 
         for (const word of sampleWords) {
           await this.createWord(word);
         }
 
-        // Create sample sentences
+        // Create sample sentences for 10 levels
         const sampleSentences = [
-          { text: "I am big.", level: 1 },
-          { text: "We are tall.", level: 1 },
-          { text: "I am big and fast.", level: 1 },
-          { text: "You are smart.", level: 2 },
-          { text: "They are kind.", level: 2 },
+          // Level 1
+          { text: "I am big.", level: 1, day: 1 },
+          { text: "We are tall.", level: 1, day: 1 },
+          { text: "I am big and fast.", level: 1, day: 1 },
+          { text: "You are good.", level: 1, day: 1 },
+          { text: "They are small.", level: 1, day: 1 },
+          
+          // Level 2
+          { text: "You are smart.", level: 2, day: 1 },
+          { text: "They are kind.", level: 2, day: 1 },
+          { text: "I have a book.", level: 2, day: 1 },
+          { text: "We love our friends.", level: 2, day: 1 },
+          { text: "The house is big.", level: 2, day: 1 },
+          
+          // Level 3
+          { text: "This is a beautiful day.", level: 3, day: 1 },
+          { text: "Learning is very important.", level: 3, day: 1 },
+          { text: "Everyone has different experiences.", level: 3, day: 1 },
+          { text: "The journey was wonderful.", level: 3, day: 1 },
+          { text: "Success requires determination.", level: 3, day: 1 },
+          
+          // Level 4
+          { text: "Every opportunity brings new challenges.", level: 4, day: 1 },
+          { text: "Environmental responsibility is crucial.", level: 4, day: 1 },
+          { text: "International communication requires understanding.", level: 4, day: 1 },
+          { text: "Personal development takes time.", level: 4, day: 1 },
+          { text: "Building relationships requires effort.", level: 4, day: 1 },
+          
+          // Level 5
+          { text: "Achievement requires determination and concentration.", level: 5, day: 1 },
+          { text: "Organizational transformation needs careful consideration.", level: 5, day: 1 },
+          { text: "Academic accomplishment demands dedication.", level: 5, day: 1 },
+          { text: "Administrative demonstration proves effectiveness.", level: 5, day: 1 },
+          { text: "Professional recommendation indicates excellence.", level: 5, day: 1 },
+          
+          // Level 6
+          { text: "Philosophical understanding requires psychological insight.", level: 6, day: 1 },
+          { text: "Technological advancement shapes sociological patterns.", level: 6, day: 1 },
+          { text: "Archaeological discoveries reveal chronological sequences.", level: 6, day: 1 },
+          { text: "Neurological research advances physiological knowledge.", level: 6, day: 1 },
+          { text: "Anthropological studies explore meteorological influences.", level: 6, day: 1 },
+          
+          // Level 7
+          { text: "Incomprehensible situations require unconventional approaches.", level: 7, day: 1 },
+          { text: "Interdisciplinary research proves indispensable for progress.", level: 7, day: 1 },
+          { text: "Uncharacteristic behavior seems counterproductive.", level: 7, day: 1 },
+          { text: "Unprecedented challenges demand unapproachable solutions.", level: 7, day: 1 },
+          { text: "Incontrovertible evidence supports irresponsible conclusions.", level: 7, day: 1 },
+          
+          // Level 8
+          { text: "Transcendentalism influences epistemological frameworks significantly.", level: 8, day: 1 },
+          { text: "Phenomenological approaches enhance jurisprudential understanding.", level: 8, day: 1 },
+          { text: "Institutionalization prevents compartmentalization of knowledge.", level: 8, day: 1 },
+          { text: "Antiestablishment movements challenge intergovernmental cooperation.", level: 8, day: 1 },
+          { text: "Extraterrestrial research explores interconnectedness systematically.", level: 8, day: 1 },
+          
+          // Level 9
+          { text: "Pseudointellectual counterrevolutionary movements challenge established paradigms.", level: 9, day: 1 },
+          { text: "Antidisestablishmentarian principles support pneumonoultramicroscopic research.", level: 9, day: 1 },
+          { text: "Floccinaucinihilipilification demonstrates supercalifragilisticexpialidocious tendencies.", level: 9, day: 1 },
+          { text: "Hippopotomonstrosesquippedaliophobia affects antidisestablishmentarianism significantly.", level: 9, day: 1 },
+          { text: "Pseudopseudohypoparathyroidism requires immunoelectrophoresis analysis.", level: 9, day: 1 },
+          
+          // Level 10
+          { text: "Pneumonoultramicroscopicsilicovolcanoconiosislike symptoms require methionylthreonylthreonylglutaminylarginyl treatment.", level: 10, day: 1 },
+          { text: "Supercalifragilisticexpialidociously complex antipsychopharmacological interventions.", level: 10, day: 1 },
+          { text: "Microspectrophotometrically analyzed tetraiodophenolphthalein compounds.", level: 10, day: 1 },
+          { text: "Spectrophotometrically measured electroencephalograph readings.", level: 10, day: 1 },
+          { text: "Extraordinarily complex pharmaceutical nomenclature systems.", level: 10, day: 1 },
         ];
 
         for (const sentence of sampleSentences) {
