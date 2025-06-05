@@ -9,7 +9,8 @@ import {
   Edit,
   Trash2,
   Plus,
-  Search
+  Search,
+  Upload
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,12 +34,16 @@ interface Word {
   id: number;
   text: string;
   level: number;
+  day: number;
+  audioUrl?: string;
 }
 
 interface Sentence {
   id: number;
   text: string;
   level: number;
+  day: number;
+  audioUrl?: string;
 }
 
 export default function AdminPage() {
@@ -61,12 +66,16 @@ export default function AdminPage() {
 
   const [newWord, setNewWord] = useState({
     text: '',
-    level: 1
+    level: 1,
+    day: 1,
+    audioUrl: ''
   });
 
   const [newSentence, setNewSentence] = useState({
     text: '',
-    level: 1
+    level: 1,
+    day: 1,
+    audioUrl: ''
   });
 
   // Fetch users
@@ -155,7 +164,7 @@ export default function AdminPage() {
         title: "단어 추가 완료",
         description: "새 단어가 성공적으로 추가되었습니다.",
       });
-      setNewWord({ text: '', level: 1 });
+      setNewWord({ text: '', level: 1, day: 1, audioUrl: '' });
       setIsAddWordOpen(false);
       refetchWords();
     },
@@ -200,7 +209,7 @@ export default function AdminPage() {
         title: "문장 추가 완료",
         description: "새 문장이 성공적으로 추가되었습니다.",
       });
-      setNewSentence({ text: '', level: 1 });
+      setNewSentence({ text: '', level: 1, day: 1, audioUrl: '' });
       setIsAddSentenceOpen(false);
       refetchSentences();
     },
@@ -490,6 +499,28 @@ export default function AdminPage() {
                         </SelectContent>
                       </Select>
                     </div>
+                    <div>
+                      <Label htmlFor="wordDay">Day</Label>
+                      <Select value={newWord.day.toString()} onValueChange={(value) => setNewWord(prev => ({ ...prev, day: parseInt(value) }))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 50 }, (_, i) => i + 1).map(day => (
+                            <SelectItem key={day} value={day.toString()}>Day {day}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="wordAudio">음성 파일 URL</Label>
+                      <Input
+                        id="wordAudio"
+                        value={newWord.audioUrl}
+                        onChange={(e) => setNewWord(prev => ({ ...prev, audioUrl: e.target.value }))}
+                        placeholder="https://example.com/audio.mp3"
+                      />
+                    </div>
                     <Button
                       onClick={() => createWordMutation.mutate(newWord)}
                       disabled={createWordMutation.isPending}
@@ -565,6 +596,28 @@ export default function AdminPage() {
                           <SelectItem value="3">Level 3</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="sentenceDay">Day</Label>
+                      <Select value={newSentence.day.toString()} onValueChange={(value) => setNewSentence(prev => ({ ...prev, day: parseInt(value) }))}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 50 }, (_, i) => i + 1).map(day => (
+                            <SelectItem key={day} value={day.toString()}>Day {day}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="sentenceAudio">음성 파일 URL</Label>
+                      <Input
+                        id="sentenceAudio"
+                        value={newSentence.audioUrl}
+                        onChange={(e) => setNewSentence(prev => ({ ...prev, audioUrl: e.target.value }))}
+                        placeholder="https://example.com/audio.mp3"
+                      />
                     </div>
                     <Button
                       onClick={() => createSentenceMutation.mutate(newSentence)}
