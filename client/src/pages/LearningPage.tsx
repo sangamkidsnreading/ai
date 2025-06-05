@@ -304,7 +304,7 @@ export default function LearningPage() {
           onClick={() => setActiveSection('words')}
           className={`flex-1 p-4 rounded-xl font-semibold transition-all ${
             activeSection === 'words'
-              ? 'bg-gradient-to-r from-green-200 to-green-300 text-gray-800 shadow-lg'
+              ? 'bg-purple-300 text-white shadow-lg'
               : 'bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >

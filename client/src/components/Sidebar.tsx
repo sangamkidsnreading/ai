@@ -117,7 +117,9 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
                   isLogout
                     ? 'text-red-600 hover:bg-red-50'
                     : isActive
-                    ? 'bg-green-500 text-white shadow-lg'
+                    ? item.id === 'learning' 
+                      ? 'bg-gradient-to-r from-green-200 to-green-300 text-gray-800 shadow-lg'
+                      : 'bg-green-500 text-white shadow-lg'
                     : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
