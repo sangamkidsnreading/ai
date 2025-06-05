@@ -126,18 +126,6 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
         </div>
       </nav>
 
-
-
-      {/* Streak */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="bg-orange-100 rounded-lg p-3 text-center">
-          <div className="text-orange-600 font-semibold flex items-center justify-center gap-2">
-            <Calendar className="w-4 h-4" />
-            {userStats.streak}일 연속 학습
-          </div>
-        </div>
-      </div>
-
       {/* Logout */}
       <div className="p-4 border-t border-gray-200">
         <button 
@@ -147,6 +135,16 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
           <LogOut className="w-5 h-5" />
           <span className="font-medium">로그아웃</span>
         </button>
+      </div>
+
+      {/* Streak */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="bg-orange-100 rounded-lg p-3 text-center">
+          <div className="text-orange-600 font-semibold flex items-center justify-center gap-2">
+            <Calendar className="w-4 h-4" />
+            {userStats.streak}일 연속 학습
+          </div>
+        </div>
       </div>
     </div>
   );
