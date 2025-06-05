@@ -362,7 +362,7 @@ export default function LearningPage() {
             className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
           >
             {/* Start Button */}
-            <div className="mb-6">
+            <div className="mb-6 flex justify-end">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -375,13 +375,11 @@ export default function LearningPage() {
               >
                 {isPlaying ? (
                   <>
-                    <Square size={20} />
-                    Stop
+                    ⏹️ Stop
                   </>
                 ) : (
                   <>
-                    <Play size={20} />
-                    Start
+                    ▶️ Start
                   </>
                 )}
               </motion.button>
