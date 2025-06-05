@@ -42,6 +42,33 @@ export default function LearningPage() {
   const currentDayProgress = dayProgress.find(d => d.day === displayDay) || 
     { day: displayDay, wordsLearned: 0, sentencesLearned: 0, coinsEarned: 0, date: new Date().toISOString() };
 
+  // Coin sound effect
+  const playCoinSound = () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      const audioContext = new AudioContextClass();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      // 동전 소리 효과 (높은 음에서 낮은 음으로)
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
+      oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.2);
+
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+      oscillator.type = 'sine';
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    } catch (error) {
+      console.log('오디오 컨텍스트 생성 실패:', error);
+    }
+  };
+
   // Speech synthesis function
   const speakText = (text: string, times: number = 1) => {
     if ('speechSynthesis' in window) {
@@ -76,6 +103,7 @@ export default function LearningPage() {
     
     if (!word.isLearned) {
       await learnWord(word.id);
+      playCoinSound();
       toast({
         title: "학습 완료!",
         description: `"${word.text}" 단어를 학습했습니다. +1 코인`,
@@ -92,6 +120,7 @@ export default function LearningPage() {
     
     if (!sentence.isLearned) {
       await learnSentence(sentence.id);
+      playCoinSound();
       toast({
         title: "학습 완료!",
         description: `"${sentence.text}" 문장을 학습했습니다. +1 코인`,
@@ -190,6 +219,7 @@ export default function LearningPage() {
               try {
                 console.log(`단어 학습 처리 시도: ${item.text}, isLearned: ${item.isLearned}`);
                 await learnWord(item.id);
+                playCoinSound();
                 console.log(`단어 학습 처리 완료: ${item.text}`);
                 toast({
                   title: "학습 완료!",
@@ -205,6 +235,7 @@ export default function LearningPage() {
               try {
                 console.log(`문장 학습 처리 시도: ${item.text}, isLearned: ${item.isLearned}`);
                 await learnSentence(item.id);
+                playCoinSound();
                 console.log(`문장 학습 처리 완료: ${item.text}`);
                 toast({
                   title: "학습 완료!",
