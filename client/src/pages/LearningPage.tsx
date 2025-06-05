@@ -410,10 +410,10 @@ export default function LearningPage() {
                     onClick={() => handleWordClick(word)}
                     className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
                       word.isLearned
-                        ? 'bg-gradient-to-br from-amber-50 to-amber-100'
-                        : 'bg-gradient-to-br from-orange-50 to-orange-100'
+                        ? 'bg-yellow-100'
+                        : 'bg-yellow-50'
                     } ${
-                      currentPlayingId === word.id.toString() ? 'ring-4 ring-orange-200' : ''
+                      currentPlayingId === word.id.toString() ? 'ring-4 ring-yellow-300' : ''
                     }`}
                   >
                     {/* Favorite Button */}
