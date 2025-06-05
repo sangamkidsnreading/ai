@@ -103,10 +103,11 @@ export default function LearningPage() {
     
     if (!word.isLearned) {
       await learnWord(word.id);
+      await loadUserData(); // 데이터 새로고침
       playCoinSound();
       toast({
         title: "학습 완료!",
-        description: `"${word.text}" 단어를 학습했습니다. +1 코인`,
+        description: `"${word.text}" 단어를 학습했습니다. +10 코인`,
       });
     }
   };
@@ -120,10 +121,11 @@ export default function LearningPage() {
     
     if (!sentence.isLearned) {
       await learnSentence(sentence.id);
+      await loadUserData(); // 데이터 새로고침
       playCoinSound();
       toast({
         title: "학습 완료!",
-        description: `"${sentence.text}" 문장을 학습했습니다. +1 코인`,
+        description: `"${sentence.text}" 문장을 학습했습니다. +3 코인`,
       });
     }
   };
@@ -214,11 +216,12 @@ export default function LearningPage() {
             console.log(`음성 재생 완료: ${item.text}`);
             repeatCount++;
             
-            // 첫 번째 반복이 끝난 후 단어 학습 처리 및 코인 획득
-            if (repeatCount === 1 && activeSection === 'words') {
+            // 3번 읽기 완료 후 학습 처리 및 코인 획득
+            if (repeatCount === maxRepeats && activeSection === 'words') {
               try {
                 console.log(`단어 학습 처리 시도: ${item.text}, isLearned: ${item.isLearned}`);
                 await learnWord(item.id);
+                await loadUserData(); // 데이터 새로고침
                 playCoinSound();
                 console.log(`단어 학습 처리 완료: ${item.text}`);
                 toast({
@@ -230,11 +233,12 @@ export default function LearningPage() {
               }
             }
             
-            // 문장 학습 처리
+            // 문장 학습 처리 (1번 읽기 완료 후)
             if (repeatCount === 1 && activeSection === 'sentences') {
               try {
                 console.log(`문장 학습 처리 시도: ${item.text}, isLearned: ${item.isLearned}`);
                 await learnSentence(item.id);
+                await loadUserData(); // 데이터 새로고침
                 playCoinSound();
                 console.log(`문장 학습 처리 완료: ${item.text}`);
                 toast({
