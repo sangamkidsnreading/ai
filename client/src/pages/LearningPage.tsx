@@ -82,7 +82,7 @@ export default function LearningPage() {
           utterance.onend = () => {
             count++;
             
-            // 1번째 읽기 완료 시 코인과 소리 (개별 클릭)
+            // 1번째 읽기 완료 시 코인과 소리 (개별 클릭) - 이미 학습된 단어도 포함
             if (count === 1 && wordId) {
               playCoinSound();
               addCoinsImmediately(1);
@@ -141,7 +141,7 @@ export default function LearningPage() {
           utterance.onend = () => {
             count++;
             
-            // 1번째 읽기 완료 시 코인과 소리 (개별 클릭)
+            // 1번째 읽기 완료 시 코인과 소리 (개별 클릭) - 이미 학습된 문장도 포함
             if (count === 1) {
               playCoinSound();
               addCoinsImmediately(3);
@@ -431,7 +431,7 @@ export default function LearningPage() {
           utterance.onend = () => {
             console.log(`음성 재생 완료: ${item.text}`);
             
-            // 문장 학습 처리 (1번 읽기 완료 후 즉시 소리와 포인트)
+            // 문장 학습 처리 (1번 읽기 완료 후 즉시 소리와 포인트) - 이미 학습된 문장도 포함
             if (repeatCount === 1) {
               // 동시에 실행 - 지연 없음
               playCoinSound();
