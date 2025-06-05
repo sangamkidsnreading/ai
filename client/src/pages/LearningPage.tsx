@@ -322,7 +322,7 @@ export default function LearningPage() {
                       ? 'bg-gradient-to-br from-green-100 to-green-200 border-2 border-green-300'
                       : 'bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 hover:border-green-300'
                   } ${
-                    currentPlayingId === word.id.toString() ? 'ring-4 ring-green-300 animate-pulse' : ''
+                    currentPlayingId === word.id.toString() ? 'ring-4 ring-green-300' : ''
                   }`}
                 >
                   {/* Favorite Button */}
@@ -346,9 +346,6 @@ export default function LearningPage() {
                   {/* Word */}
                   <div className="text-center mt-4">
                     <div className="text-2xl font-bold text-gray-800 mb-2">{word.text}</div>
-                    {currentPlayingId === word.id.toString() && (
-                      <Volume2 className="mx-auto text-green-500 bounce-speech" size={20} />
-                    )}
                   </div>
                 </motion.div>
               ))}
@@ -378,7 +375,7 @@ export default function LearningPage() {
                       ? 'bg-gradient-to-r from-orange-100 to-yellow-100 border-2 border-orange-300'
                       : 'bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 hover:border-orange-300'
                   } ${
-                    currentPlayingId === sentence.id.toString() ? 'ring-4 ring-orange-300 animate-pulse' : ''
+                    currentPlayingId === sentence.id.toString() ? 'ring-4 ring-orange-300' : ''
                   }`}
                 >
                   {/* Level Badge */}
@@ -391,9 +388,6 @@ export default function LearningPage() {
                     <div className="flex-1">
                       <div className="text-xl font-semibold text-gray-800">{sentence.text}</div>
                     </div>
-                    {currentPlayingId === sentence.id.toString() && (
-                      <Volume2 className="text-orange-500 bounce-speech" size={24} />
-                    )}
                   </div>
                 </motion.div>
               ))}
