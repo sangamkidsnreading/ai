@@ -282,12 +282,12 @@ export default function LearningPage() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="gradient-bg rounded-2xl p-6 text-white mb-6"
+        className="gradient-bg rounded-2xl p-4 text-white mb-6"
       >
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold mb-2">DAY {currentDay}</h1>
-            <p className="opacity-90">오늘 학습: 단어 {currentDayProgress.wordsLearned}개, 문장 {currentDayProgress.sentencesLearned}개</p>
+            <h1 className="text-xl font-bold mb-1">DAY {currentDay}</h1>
+            <p className="opacity-90 text-sm">오늘 학습: 단어 {currentDayProgress.wordsLearned}개, 문장 {currentDayProgress.sentencesLearned}개</p>
           </div>
           <div className="flex items-center gap-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
             <Zap className="text-yellow-300" size={20} />
