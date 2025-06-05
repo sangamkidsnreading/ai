@@ -28,7 +28,8 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
     { id: 'learning', label: '학습하기', icon: Home, number: '1' },
     { id: 'dashboard', label: '대시보드', icon: BarChart3, number: '2' },
     { id: 'profile', label: '프로필', icon: User, number: '3' },
-    ...(currentUser?.role === 'admin' ? [{ id: 'admin', label: '관리자', icon: Shield, number: '4' }] : []),
+    { id: 'logout', label: '로그아웃', icon: LogOut, number: '4' },
+    ...(currentUser?.role === 'admin' ? [{ id: 'admin', label: '관리자', icon: Shield, number: '5' }] : []),
   ];
 
   const handleLogout = () => {
@@ -98,15 +99,24 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
           {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
+            const isLogout = item.id === 'logout';
             
             return (
               <motion.button
                 key={item.id}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => onSectionChange(item.id)}
+                onClick={() => {
+                  if (isLogout) {
+                    handleLogout();
+                  } else {
+                    onSectionChange(item.id);
+                  }
+                }}
                 className={`flex items-center gap-3 w-full p-3 rounded-lg transition-all font-medium ${
-                  isActive
+                  isLogout
+                    ? 'text-red-600 hover:bg-red-50'
+                    : isActive
                     ? 'bg-green-500 text-white shadow-lg'
                     : 'text-gray-600 hover:bg-gray-100'
                 }`}
@@ -114,7 +124,9 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
                 <Icon className="w-5 h-5" />
                 <span>{item.label}</span>
                 <span className={`ml-auto text-xs px-2 py-1 rounded-full ${
-                  isActive 
+                  isLogout
+                    ? 'bg-red-100 text-red-600'
+                    : isActive 
                     ? 'bg-white bg-opacity-20' 
                     : 'bg-gray-200'
                 }`}>
@@ -126,26 +138,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
         </div>
       </nav>
 
-      {/* Logout */}
-      <div className="p-4 border-t border-gray-200">
-        <button 
-          onClick={handleLogout}
-          className="flex items-center gap-3 w-full p-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className="font-medium">로그아웃</span>
-        </button>
-      </div>
 
-      {/* Streak */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="bg-orange-100 rounded-lg p-3 text-center">
-          <div className="text-orange-600 font-semibold flex items-center justify-center gap-2">
-            <Calendar className="w-4 h-4" />
-            {userStats.streak}일 연속 학습
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
