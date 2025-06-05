@@ -332,7 +332,7 @@ export default function LearningPage() {
           onClick={handlePlayAll}
           className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
             isPlaying
-              ? 'bg-red-500 text-white'
+              ? 'bg-purple-300 text-white'
               : 'bg-pink-200 text-gray-800 hover:bg-pink-300'
           }`}
         >
