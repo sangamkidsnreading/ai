@@ -4,6 +4,7 @@ import { generateMockBadges } from '@/lib/utils';
 interface Word {
   id: number;
   text: string;
+  meaning?: string;
   level: number;
   day: number;
   isLearned: boolean;

@@ -426,7 +426,6 @@ export default function LearningPage() {
           
           utterance.onend = () => {
             console.log(`음성 재생 완료: ${item.text}`);
-            repeatCount++;
             
             if (repeatCount < maxRepeats && playingState) {
               // 같은 문장을 다시 읽기 (300ms 간격)
