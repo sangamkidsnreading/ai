@@ -260,10 +260,9 @@ export default function LearningPage() {
           
           utterance.onend = () => {
             console.log(`음성 재생 완료: ${item.text}`);
-            repeatCount++;
             
             // 1번 읽기 완료 후 학습 처리 및 코인 획득 (즉시 소리와 포인트)
-            if (repeatCount === 1 && activeSection === 'words') {
+            if (repeatCount === 0 && activeSection === 'words') {
               // 동시에 실행 - 지연 없음
               playCoinSound();
               addCoinsImmediately(1);
@@ -285,7 +284,7 @@ export default function LearningPage() {
             }
             
             // 문장 학습 처리 (1번 읽기 완료 후 즉시 소리와 포인트)
-            if (repeatCount === 1 && activeSection === 'sentences') {
+            if (repeatCount === 0 && activeSection === 'sentences') {
               // 동시에 실행 - 지연 없음
               playCoinSound();
               addCoinsImmediately(3);
@@ -305,6 +304,8 @@ export default function LearningPage() {
                 });
               }, 0);
             }
+
+            repeatCount++;
             
             if (repeatCount < maxRepeats && playingState) {
               // 같은 단어를 다시 읽기 (300ms 간격)
