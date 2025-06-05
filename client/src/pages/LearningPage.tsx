@@ -476,7 +476,7 @@ export default function LearningPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mt-6 bg-white rounded-2xl p-6 shadow-lg"
+        className="mt-6 bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
       >
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
           {selectedDay > 0 ? `DAY ${selectedDay}` : `DAY ${currentDay}`} 학습 진도
