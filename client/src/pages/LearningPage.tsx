@@ -408,11 +408,7 @@ export default function LearningPage() {
                     whileHover={{ scale: 1.05, y: -5 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleWordClick(word)}
-                    className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
-                      word.isLearned
-                        ? 'bg-yellow-100'
-                        : 'bg-yellow-50'
-                    } ${
+                    className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover bg-yellow-50 ${
                       currentPlayingId === word.id.toString() ? 'ring-4 ring-yellow-300' : ''
                     }`}
                   >
