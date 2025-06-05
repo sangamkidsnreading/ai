@@ -333,7 +333,7 @@ export default function LearningPage() {
           className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
             isPlaying
               ? 'bg-red-500 text-white'
-              : 'bg-pink-400 text-white hover:bg-pink-500'
+              : 'bg-pink-200 text-gray-800 hover:bg-pink-300'
           }`}
         >
           {isPlaying ? (
