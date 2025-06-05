@@ -60,6 +60,7 @@ interface LearningState {
   setSelectedDay: (day: number) => void;
   getFilteredWords: () => Word[];
   getFilteredSentences: () => Sentence[];
+  addCoinsImmediately: (coins: number) => void;
 }
 
 export const useLearningStore = create<LearningState>((set, get) => ({
@@ -273,5 +274,14 @@ export const useLearningStore = create<LearningState>((set, get) => ({
       (selectedLevel === 0 || sentence.level === selectedLevel) &&
       (selectedDay === 0 || sentence.day === selectedDay)
     );
+  },
+
+  addCoinsImmediately: (coins: number) => {
+    set(state => ({
+      userStats: {
+        ...state.userStats,
+        totalCoins: state.userStats.totalCoins + coins
+      }
+    }));
   },
 }));
