@@ -237,47 +237,6 @@ export default function LearningPage() {
         if (currentIndex < items.length && playingState) {
           const item = items[currentIndex];
           
-          // 새 단어/문장 시작 시 (repeatCount가 0일 때) 코인과 소리 즉시 실행
-          if (repeatCount === 0) {
-            if (activeSection === 'words') {
-              playCoinSound();
-              addCoinsImmediately(1);
-              
-              toast({
-                title: "학습 완료!",
-                description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
-              });
-              
-              // 백그라운드에서 서버 처리
-              setTimeout(() => {
-                learnWord(item.id).then(() => {
-                  loadUserData();
-                  console.log(`단어 학습 처리 완료: ${item.text}`);
-                }).catch(error => {
-                  console.error('단어 학습 처리 오류:', error);
-                });
-              }, 0);
-            } else if (activeSection === 'sentences') {
-              playCoinSound();
-              addCoinsImmediately(3);
-              
-              toast({
-                title: "학습 완료!",
-                description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
-              });
-              
-              // 백그라운드에서 서버 처리
-              setTimeout(() => {
-                learnSentence(item.id).then(() => {
-                  loadUserData();
-                  console.log(`문장 학습 처리 완료: ${item.text}`);
-                }).catch(error => {
-                  console.error('문장 학습 처리 오류:', error);
-                });
-              }, 0);
-            }
-          }
-          
           console.log(`재생 중: ${item.text} (${repeatCount + 1}/${maxRepeats})`);
           setCurrentPlayingId(item.id.toString());
           
@@ -312,6 +271,45 @@ export default function LearningPage() {
                 }
               }, 300);
             } else {
+              // 한 단어의 3번 읽기 완료 - 이제 코인과 소리 적립
+              if (activeSection === 'words') {
+                playCoinSound();
+                addCoinsImmediately(1);
+                
+                toast({
+                  title: "학습 완료!",
+                  description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
+                });
+                
+                // 백그라운드에서 서버 처리
+                setTimeout(() => {
+                  learnWord(item.id).then(() => {
+                    loadUserData();
+                    console.log(`단어 학습 처리 완료: ${item.text}`);
+                  }).catch(error => {
+                    console.error('단어 학습 처리 오류:', error);
+                  });
+                }, 0);
+              } else if (activeSection === 'sentences') {
+                playCoinSound();
+                addCoinsImmediately(3);
+                
+                toast({
+                  title: "학습 완료!",
+                  description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
+                });
+                
+                // 백그라운드에서 서버 처리
+                setTimeout(() => {
+                  learnSentence(item.id).then(() => {
+                    loadUserData();
+                    console.log(`문장 학습 처리 완료: ${item.text}`);
+                  }).catch(error => {
+                    console.error('문장 학습 처리 오류:', error);
+                  });
+                }, 0);
+              }
+              
               // 다음 단어로 이동
               repeatCount = 0;
               currentIndex++;
@@ -428,10 +426,17 @@ export default function LearningPage() {
           
           utterance.onend = () => {
             console.log(`음성 재생 완료: ${item.text}`);
+            repeatCount++;
             
-            // 문장 학습 처리 (1번 읽기 완료 후 즉시 소리와 포인트) - 이미 학습된 문장도 포함
-            if (repeatCount === 1) {
-              // 동시에 실행 - 지연 없음
+            if (repeatCount < maxRepeats && playingState) {
+              // 같은 문장을 다시 읽기 (300ms 간격)
+              setTimeout(() => {
+                if (playingState) {
+                  playNext();
+                }
+              }, 300);
+            } else {
+              // 한 문장의 3번 읽기 완료 - 이제 코인과 소리 적립
               playCoinSound();
               addCoinsImmediately(3);
               
@@ -449,16 +454,7 @@ export default function LearningPage() {
                   console.error('문장 학습 처리 오류:', error);
                 });
               }, 0);
-            }
-            
-            if (repeatCount < maxRepeats && playingState) {
-              // 같은 문장을 다시 읽기 (300ms 간격)
-              setTimeout(() => {
-                if (playingState) {
-                  playNext();
-                }
-              }, 300);
-            } else {
+              
               // 다음 문장으로 넘어가기 (500ms 간격)
               repeatCount = 0;
               currentIndex++;
