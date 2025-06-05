@@ -367,6 +367,153 @@ export default function LearningPage() {
     }, 100);
   };
 
+  // Play all sentences function - 문장들을 각각 3번씩 읽기
+  const handlePlayAllSentences = () => {
+    console.log('Sentences Start 버튼 클릭됨');
+    
+    if (isPlaying) {
+      console.log('재생 중단');
+      if (playbackController) {
+        playbackController.stop();
+      } else {
+        speechSynthesis.cancel();
+        setIsPlaying(false);
+        setCurrentPlayingId(null);
+      }
+      toast({
+        title: "재생 중단",
+        description: "음성 재생이 중단되었습니다.",
+      });
+      return;
+    }
+
+    console.log('문장 재생 시작');
+    const items = getFilteredSentences().slice(0, 10); // 10개만 선택
+    console.log('재생할 문장들:', items);
+    
+    if (items.length === 0) {
+      console.log('재생할 문장이 없음');
+      toast({
+        title: "알림",
+        description: "재생할 문장이 없습니다.",
+      });
+      return;
+    }
+
+    // 상태를 먼저 설정하고 약간의 지연 후에 재생 시작
+    setIsPlaying(true);
+    
+    // React 상태 업데이트 완료를 위한 지연
+    setTimeout(() => {
+      let currentIndex = 0;
+      let repeatCount = 0;
+      let playingState = true; // 로컬 상태로 관리
+      const maxRepeats = 3; // 각 문장을 3번씩 읽기
+
+      const playNext = () => {
+        console.log(`playNext 호출됨 - currentIndex: ${currentIndex}, playingState: ${playingState}, items.length: ${items.length}`);
+        
+        if (currentIndex < items.length && playingState) {
+          const item = items[currentIndex];
+          repeatCount++;
+          
+          console.log(`재생 중: ${item.text} (${repeatCount}/${maxRepeats})`);
+          setCurrentPlayingId(item.id.toString());
+          
+          const utterance = new SpeechSynthesisUtterance(item.text);
+          utterance.rate = 0.8;
+          utterance.lang = 'en-US';
+          
+          utterance.onstart = () => {
+            console.log(`음성 시작: ${item.text}`);
+          };
+          
+          utterance.onend = () => {
+            console.log(`음성 재생 완료: ${item.text}`);
+            
+            // 문장 학습 처리 (1번 읽기 완료 후 즉시 소리와 포인트)
+            if (repeatCount === 1) {
+              // 동시에 실행 - 지연 없음
+              playCoinSound();
+              addCoinsImmediately(3);
+              
+              toast({
+                title: "학습 완료!",
+                description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
+              });
+              
+              // 백그라운드에서 서버 처리
+              setTimeout(() => {
+                learnSentence(item.id).then(() => {
+                  loadUserData();
+                  console.log(`문장 학습 처리 완료: ${item.text}`);
+                }).catch(error => {
+                  console.error('문장 학습 처리 오류:', error);
+                });
+              }, 0);
+            }
+            
+            if (repeatCount < maxRepeats && playingState) {
+              // 같은 문장을 다시 읽기 (300ms 간격)
+              setTimeout(() => {
+                if (playingState) {
+                  playNext();
+                }
+              }, 300);
+            } else {
+              // 다음 문장으로 넘어가기 (500ms 간격)
+              repeatCount = 0;
+              currentIndex++;
+              setTimeout(() => {
+                if (currentIndex < items.length && playingState) {
+                  playNext();
+                } else {
+                  console.log('모든 문장 재생 완료');
+                  playingState = false;
+                  setIsPlaying(false);
+                  setCurrentPlayingId(null);
+                  toast({
+                    title: "학습 완료!",
+                    description: `${items.length}개의 문장을 모두 학습했습니다.`,
+                  });
+                }
+              }, 500);
+            }
+          };
+          
+          utterance.onerror = (event) => {
+            console.error('Speech synthesis error:', event);
+            // 에러 발생 시 자동으로 다음으로 넘어가기
+            if (playingState) {
+              repeatCount = 0;
+              currentIndex++;
+              setTimeout(() => {
+                if (currentIndex < items.length && playingState) {
+                  playNext();
+                } else {
+                  playingState = false;
+                  setIsPlaying(false);
+                  setCurrentPlayingId(null);
+                }
+              }, 500);
+            }
+          };
+          
+          console.log('speechSynthesis.speak 호출');
+          speechSynthesis.speak(utterance);
+        } else {
+          console.log('playNext 조건 실패 - 재생 종료');
+          playingState = false;
+          setIsPlaying(false);
+          setCurrentPlayingId(null);
+        }
+      };
+
+      console.log('playNext 함수 호출 시작');
+      playNext();
+    }, 100);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6 font-korean">
       {/* Header */}
@@ -540,8 +687,40 @@ export default function LearningPage() {
             exit={{ opacity: 0, x: -20 }}
             className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
           >
-            <div className="flex justify-between items-center mb-6">
+            {/* Start Button */}
+            <div className="mb-6 flex justify-end">
+              <div className="relative group">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handlePlayAllSentences}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+                    isPlaying
+                      ? 'bg-red-500 text-white'
+                      : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
+                  }`}
+                >
+                  {isPlaying ? (
+                    <>
+                      ⏹️ Stop
+                    </>
+                  ) : (
+                    <>
+                      ▶️ Start
+                    </>
+                  )}
+                </motion.button>
+                
+                {/* Tooltip */}
+                <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                  <div className="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap">
+                    문장들을 순서대로 3번씩 읽어드립니다
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            <div className="flex justify-between items-center mb-6">
               <div className="text-sm text-gray-600">
                 {selectedLevel > 0 && `Level ${selectedLevel}`}
                 {selectedLevel > 0 && selectedDay > 0 && ' - '}
