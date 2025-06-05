@@ -426,7 +426,7 @@ export default function LearningPage() {
             className="bg-white rounded-2xl p-6 shadow-lg"
           >
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-orange-600">Create with Words.</h2>
+
               <div className="text-sm text-gray-600">
                 {selectedLevel > 0 && `Level ${selectedLevel}`}
                 {selectedLevel > 0 && selectedDay > 0 && ' - '}
