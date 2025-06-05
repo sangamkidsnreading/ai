@@ -308,7 +308,7 @@ export default function LearningPage() {
               : 'bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
-          Words In, Power On.
+          Words
         </motion.button>
         <motion.button
           whileHover={{ scale: 1.02 }}
@@ -320,7 +320,7 @@ export default function LearningPage() {
               : 'bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
-          Create with Sentences.
+          Sentences
         </motion.button>
       </div>
 
