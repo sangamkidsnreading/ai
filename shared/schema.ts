@@ -16,6 +16,7 @@ export const users = pgTable("users", {
 export const words = pgTable("words", {
   id: serial("id").primaryKey(),
   text: text("text").notNull(),
+  meaning: text("meaning"),
   level: integer("level").notNull().default(1),
   day: integer("day").notNull().default(1),
   audioUrl: text("audio_url"), // 음성 파일 URL

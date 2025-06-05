@@ -663,8 +663,11 @@ export default function LearningPage() {
 
 
                     {/* Word */}
-                    <div className="flex items-center justify-center h-full min-h-[80px]">
+                    <div className="flex flex-col items-center justify-center h-full min-h-[80px]">
                       <div className="text-2xl font-bold text-gray-800 text-center">{word.text}</div>
+                      {word.meaning && (
+                        <div className="text-lg text-gray-600 text-center mt-2">{word.meaning}</div>
+                      )}
                     </div>
                   </motion.div>
                 ))}
