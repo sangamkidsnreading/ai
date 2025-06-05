@@ -321,6 +321,7 @@ export default function LearningPage() {
               </div>
               <div className="text-left">
                 <h3 className="font-bold text-purple-700">Words</h3>
+                <p className="text-sm text-purple-600">새로운 단어 5개와 문장 2개를 학습해보세요!</p>
               </div>
             </div>
           </motion.button>
@@ -341,6 +342,7 @@ export default function LearningPage() {
               </div>
               <div className="text-left">
                 <h3 className="font-bold text-green-700">Sentences</h3>
+                <p className="text-sm text-green-600">구조한 학습이 성공의 열쇠입니다. 화이팅!</p>
               </div>
             </div>
           </motion.button>
