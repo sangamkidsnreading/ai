@@ -254,7 +254,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (isLearned) {
         const stats = await storage.getUserStats(userId);
         if (stats) {
-          const updates: any = { totalCoins: stats.totalCoins + 1 };
+          const coinReward = wordId ? 10 : 3; // 단어 10코인, 문장 3코인
+          const updates: any = { totalCoins: stats.totalCoins + coinReward };
           if (wordId) updates.totalWordsLearned = stats.totalWordsLearned + 1;
           if (sentenceId) updates.totalSentencesLearned = stats.totalSentencesLearned + 1;
           await storage.updateUserStats(userId, updates);
@@ -265,12 +266,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const dayProgressList = await storage.getDayProgress(userId);
         const currentDay = dayProgressList.length > 0 ? Math.max(...dayProgressList.map(d => d.day)) : 1;
         
-        const todayProgress = dayProgressList.find(d => d.date === today && d.day === currentDay);
+        let todayProgress = dayProgressList.find(d => d.date === today && d.day === currentDay);
         if (todayProgress) {
-          const updates: any = { coinsEarned: todayProgress.coinsEarned + 1 };
+          const coinReward = wordId ? 10 : 3;
+          const updates: any = { 
+            coinsEarned: todayProgress.coinsEarned + coinReward,
+            date: today
+          };
           if (wordId) updates.wordsLearned = todayProgress.wordsLearned + 1;
           if (sentenceId) updates.sentencesLearned = todayProgress.sentencesLearned + 1;
           await storage.updateDayProgress({ ...todayProgress, ...updates });
+        } else {
+          // 오늘의 progress가 없으면 새로 생성
+          const coinReward = wordId ? 10 : 3;
+          await storage.updateDayProgress({
+            userId,
+            day: currentDay,
+            wordsLearned: wordId ? 1 : 0,
+            sentencesLearned: sentenceId ? 1 : 0,
+            coinsEarned: coinReward,
+            date: today
+          });
         }
       }
 
