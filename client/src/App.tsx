@@ -35,7 +35,7 @@ function AuthenticatedApp() {
   const renderContent = () => {
     switch (activeSection) {
       case 'learning':
-        return <LevelSelectPage />;
+        return <LearningPage />;
       case 'dashboard':
         return <DashboardPage />;
       case 'profile':
@@ -47,7 +47,7 @@ function AuthenticatedApp() {
           </ProtectedRoute>
         );
       default:
-        return <LevelSelectPage />;
+        return <LearningPage />;
     }
   };
 
@@ -74,7 +74,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={AuthenticatedApp} />
-      <Route path="/learning" component={LearningPage} />
+      <Route path="/learning" component={AuthenticatedApp} />
       <Route path="/dashboard" component={AuthenticatedApp} />
       <Route path="/profile" component={AuthenticatedApp} />
       <Route path="/admin" component={AuthenticatedApp} />

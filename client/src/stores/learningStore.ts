@@ -45,6 +45,8 @@ interface LearningState {
   dayProgress: DayProgress[];
   userStats: UserStats;
   currentDay: number;
+  selectedLevel: number;
+  selectedDay: number;
   
   loadUserData: () => Promise<void>;
   learnWord: (wordId: number) => Promise<void>;
@@ -52,6 +54,10 @@ interface LearningState {
   toggleFavorite: (wordId: number) => Promise<void>;
   setWords: (words: Word[]) => void;
   setSentences: (sentences: Sentence[]) => void;
+  setSelectedLevel: (level: number) => void;
+  setSelectedDay: (day: number) => void;
+  getFilteredWords: () => Word[];
+  getFilteredSentences: () => Sentence[];
 }
 
 export const useLearningStore = create<LearningState>((set, get) => ({
@@ -67,6 +73,8 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     badges: generateMockBadges(),
   },
   currentDay: 1,
+  selectedLevel: 1,
+  selectedDay: 1,
 
   loadUserData: async () => {
     try {
@@ -245,4 +253,23 @@ export const useLearningStore = create<LearningState>((set, get) => ({
 
   setWords: (words: Word[]) => set({ words }),
   setSentences: (sentences: Sentence[]) => set({ sentences }),
+  
+  setSelectedLevel: (level: number) => set({ selectedLevel: level }),
+  setSelectedDay: (day: number) => set({ selectedDay: day }),
+  
+  getFilteredWords: () => {
+    const { words, selectedLevel, selectedDay } = get();
+    return words.filter(word => 
+      (selectedLevel === 0 || word.level === selectedLevel) &&
+      (selectedDay === 0 || word.day === selectedDay)
+    );
+  },
+  
+  getFilteredSentences: () => {
+    const { sentences, selectedLevel, selectedDay } = get();
+    return sentences.filter(sentence => 
+      (selectedLevel === 0 || sentence.level === selectedLevel) &&
+      (selectedDay === 0 || sentence.day === selectedDay)
+    );
+  },
 }));

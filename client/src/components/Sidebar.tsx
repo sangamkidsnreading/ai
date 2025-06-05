@@ -24,6 +24,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
   const { dayProgress, userStats } = useLearningStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
+  const [selectedDay, setSelectedDay] = useState('');
 
   const navigationItems = [
     { id: 'learning', label: '학습하기', icon: Home, number: '1' },
@@ -74,12 +75,22 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
         <select 
           value={selectedLevel}
           onChange={(e) => setSelectedLevel(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm mb-2"
         >
           <option value="">Select Level</option>
           <option value="1">Level 1</option>
           <option value="2">Level 2</option>
           <option value="3">Level 3</option>
+        </select>
+        <select 
+          value={selectedDay}
+          onChange={(e) => setSelectedDay(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+        >
+          <option value="">Select Day</option>
+          {Array.from({ length: 50 }, (_, i) => i + 1).map(day => (
+            <option key={day} value={day.toString()}>Day {day}</option>
+          ))}
         </select>
       </div>
 
