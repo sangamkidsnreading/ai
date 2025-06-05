@@ -277,7 +277,7 @@ export default function LearningPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 p-6 font-korean">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6 font-korean">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -304,8 +304,8 @@ export default function LearningPage() {
           onClick={() => setActiveSection('words')}
           className={`flex-1 p-4 rounded-xl font-semibold transition-all ${
             activeSection === 'words'
-              ? 'bg-purple-300 text-white shadow-lg'
-              : 'bg-white text-gray-700 hover:bg-gray-50'
+              ? 'bg-blue-500 text-white shadow-lg'
+              : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md'
           }`}
         >
           Words
@@ -316,8 +316,8 @@ export default function LearningPage() {
           onClick={() => setActiveSection('sentences')}
           className={`flex-1 p-4 rounded-xl font-semibold transition-all ${
             activeSection === 'sentences'
-              ? 'bg-purple-300 text-white shadow-lg'
-              : 'bg-white text-gray-700 hover:bg-gray-50'
+              ? 'bg-green-500 text-white shadow-lg'
+              : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md'
           }`}
         >
           Sentences
@@ -332,8 +332,8 @@ export default function LearningPage() {
           onClick={handlePlayAll}
           className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
             isPlaying
-              ? 'bg-purple-300 text-white'
-              : 'bg-pink-200 text-gray-800 hover:bg-pink-300'
+              ? 'bg-red-500 text-white'
+              : 'bg-yellow-500 text-white hover:bg-yellow-600'
           }`}
         >
           {isPlaying ? (
@@ -358,7 +358,7 @@ export default function LearningPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="bg-white rounded-2xl p-6 shadow-lg"
+            className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
           >
             <div className="flex justify-between items-center mb-6">
 
@@ -423,7 +423,7 @@ export default function LearningPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="bg-white rounded-2xl p-6 shadow-lg"
+            className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
           >
             <div className="flex justify-between items-center mb-6">
 
