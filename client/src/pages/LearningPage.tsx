@@ -104,13 +104,11 @@ export default function LearningPage() {
     }
 
     console.log('재생 시작');
-    setIsPlaying(true);
     const items = activeSection === 'words' ? words.slice(0, 10) : sentences.slice(0, 10); // 10개만 선택
     console.log('재생할 아이템들:', items);
     
     if (items.length === 0) {
       console.log('재생할 단어가 없음');
-      setIsPlaying(false);
       toast({
         title: "알림",
         description: "재생할 단어가 없습니다.",
@@ -118,31 +116,35 @@ export default function LearningPage() {
       return;
     }
 
-    let currentIndex = 0;
-    let repeatCount = 0;
-    const maxRepeats = 3; // 각 단어를 3번씩 읽기
+    // 상태를 먼저 설정하고 약간의 지연 후에 재생 시작
+    setIsPlaying(true);
+    
+    // React 상태 업데이트 완료를 위한 지연
+    setTimeout(() => {
+      let currentIndex = 0;
+      let repeatCount = 0;
+      let playingState = true; // 로컬 상태로 관리
+      const maxRepeats = 3; // 각 단어를 3번씩 읽기
 
-    const playNext = () => {
-      console.log(`playNext 호출됨 - currentIndex: ${currentIndex}, isPlaying: ${isPlaying}, items.length: ${items.length}`);
-      
-      if (currentIndex < items.length && isPlaying) {
-        const item = items[currentIndex];
-        console.log(`재생 중: ${item.text} (${repeatCount + 1}/${maxRepeats})`);
-        setCurrentPlayingId(item.id.toString());
+      const playNext = async () => {
+        console.log(`playNext 호출됨 - currentIndex: ${currentIndex}, playingState: ${playingState}, items.length: ${items.length}`);
         
-        // Speech synthesis 지원 확인
-        if (!('speechSynthesis' in window)) {
-          console.error('Speech synthesis not supported');
-          toast({
-            title: "오류",
-            description: "음성 합성이 지원되지 않는 브라우저입니다.",
-          });
-          setIsPlaying(false);
-          return;
-        }
-        
-        // 음성이 준비될 때까지 잠시 대기
-        setTimeout(() => {
+        if (currentIndex < items.length && playingState) {
+          const item = items[currentIndex];
+          console.log(`재생 중: ${item.text} (${repeatCount + 1}/${maxRepeats})`);
+          setCurrentPlayingId(item.id.toString());
+          
+          // Speech synthesis 지원 확인
+          if (!('speechSynthesis' in window)) {
+            console.error('Speech synthesis not supported');
+            toast({
+              title: "오류",
+              description: "음성 합성이 지원되지 않는 브라우저입니다.",
+            });
+            setIsPlaying(false);
+            return;
+          }
+          
           const utterance = new SpeechSynthesisUtterance(item.text);
           utterance.rate = 0.8;
           utterance.lang = 'en-US';
@@ -151,14 +153,27 @@ export default function LearningPage() {
             console.log(`음성 시작: ${item.text}`);
           };
           
-          utterance.onend = () => {
+          utterance.onend = async () => {
             console.log(`음성 재생 완료: ${item.text}`);
             repeatCount++;
             
-            if (repeatCount < maxRepeats) {
+            // 첫 번째 반복이 끝난 후 단어 학습 처리 및 코인 획득
+            if (repeatCount === 1 && activeSection === 'words' && !item.isLearned) {
+              try {
+                await learnWord(item.id);
+                toast({
+                  title: "학습 완료!",
+                  description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
+                });
+              } catch (error) {
+                console.error('단어 학습 처리 오류:', error);
+              }
+            }
+            
+            if (repeatCount < maxRepeats && playingState) {
               // 같은 단어를 다시 읽기 (0.5초 간격)
               setTimeout(() => {
-                if (isPlaying) {
+                if (playingState) {
                   playNext();
                 }
               }, 500);
@@ -167,10 +182,11 @@ export default function LearningPage() {
               repeatCount = 0;
               currentIndex++;
               setTimeout(() => {
-                if (currentIndex < items.length && isPlaying) {
+                if (currentIndex < items.length && playingState) {
                   playNext();
                 } else {
                   console.log('모든 단어 재생 완료');
+                  playingState = false;
                   setIsPlaying(false);
                   setCurrentPlayingId(null);
                   toast({
@@ -188,22 +204,24 @@ export default function LearningPage() {
               title: "오류",
               description: "음성 재생 중 오류가 발생했습니다.",
             });
+            playingState = false;
             setIsPlaying(false);
             setCurrentPlayingId(null);
           };
           
           console.log('speechSynthesis.speak 호출');
           speechSynthesis.speak(utterance);
-        }, 100);
-      } else {
-        console.log('playNext 조건 실패 - 재생 종료');
-        setIsPlaying(false);
-        setCurrentPlayingId(null);
-      }
-    };
+        } else {
+          console.log('playNext 조건 실패 - 재생 종료');
+          playingState = false;
+          setIsPlaying(false);
+          setCurrentPlayingId(null);
+        }
+      };
 
-    console.log('playNext 함수 호출 시작');
-    playNext();
+      console.log('playNext 함수 호출 시작');
+      playNext();
+    }, 100);
   };
 
   return (
