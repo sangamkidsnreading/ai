@@ -40,7 +40,7 @@ export default function ProfilePage() {
         newPassword: '',
         confirmPassword: '',
       });
-      setAvatarImage(currentUser.avatar || '');
+      setAvatarImage((currentUser as any).avatar || '');
       loadUserData();
     }
   }, [currentUser, loadUserData]);
