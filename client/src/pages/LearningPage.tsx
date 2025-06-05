@@ -385,10 +385,10 @@ export default function LearningPage() {
                     onClick={() => handleWordClick(word)}
                     className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
                       word.isLearned
-                        ? 'bg-gradient-to-br from-green-100 to-green-200 border-2 border-green-300'
-                        : 'bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 hover:border-green-300'
+                        ? 'bg-gradient-to-br from-orange-200 to-orange-300'
+                        : 'bg-gradient-to-br from-orange-100 to-orange-200'
                     } ${
-                      currentPlayingId === word.id.toString() ? 'ring-4 ring-green-300' : ''
+                      currentPlayingId === word.id.toString() ? 'ring-4 ring-orange-300' : ''
                     }`}
                   >
                     {/* Favorite Button */}
@@ -404,10 +404,7 @@ export default function LearningPage() {
                       <Heart size={16} fill={word.isFavorite ? 'currentColor' : 'none'} />
                     </button>
 
-                    {/* Level Badge */}
-                    <div className="absolute top-2 left-2 w-6 h-6 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                      {word.level}
-                    </div>
+
 
                     {/* Word */}
                     <div className="flex items-center justify-center h-full min-h-[80px]">
