@@ -358,7 +358,7 @@ export default function LearningPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="bg-white rounded-2xl p-6 shadow-lg"
+            className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 shadow-lg"
           >
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-green-600">Words In, Power On.</h2>
