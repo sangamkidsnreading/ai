@@ -303,31 +303,50 @@ export default function LearningPage() {
       </motion.div>
 
       {/* Section Toggle */}
-      <div className="flex gap-4 mb-6">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setActiveSection('words')}
-          className={`flex-1 p-4 rounded-xl font-semibold transition-all ${
-            activeSection === 'words'
-              ? 'bg-blue-500 text-white shadow-lg'
-              : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md'
-          }`}
-        >
-          Words
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setActiveSection('sentences')}
-          className={`flex-1 p-4 rounded-xl font-semibold transition-all ${
-            activeSection === 'sentences'
-              ? 'bg-green-500 text-white shadow-lg'
-              : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md'
-          }`}
-        >
-          Sentences
-        </motion.button>
+      <div className="bg-white rounded-xl p-4 shadow-lg mb-6">
+        <div className="grid grid-cols-2 gap-4">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setActiveSection('words')}
+            className={`p-6 rounded-xl transition-all ${
+              activeSection === 'words'
+                ? 'bg-purple-100 border-2 border-purple-300'
+                : 'bg-purple-50 hover:bg-purple-100'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">W</span>
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-purple-700">Words</h3>
+                <p className="text-sm text-purple-600">새로운 단어 5개와 문장 2개를 학습해보세요!</p>
+              </div>
+            </div>
+          </motion.button>
+          
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setActiveSection('sentences')}
+            className={`p-6 rounded-xl transition-all ${
+              activeSection === 'sentences'
+                ? 'bg-green-100 border-2 border-green-300'
+                : 'bg-green-50 hover:bg-green-100'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">S</span>
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-green-700">Sentences</h3>
+                <p className="text-sm text-green-600">구조한 학습이 성공의 열쇠입니다. 화이팅!</p>
+              </div>
+            </div>
+          </motion.button>
+        </div>
       </div>
 
       {/* Play Controls */}
