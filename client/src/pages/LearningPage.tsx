@@ -30,6 +30,7 @@ export default function LearningPage() {
   const [activeSection, setActiveSection] = useState<'words' | 'sentences'>('words');
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPlayingId, setCurrentPlayingId] = useState<string | null>(null);
+  const [playbackController, setPlaybackController] = useState<{ stop: () => void } | null>(null);
 
   const currentDayProgress = dayProgress.find(d => d.day === currentDay) || 
     { day: currentDay, wordsLearned: 0, sentencesLearned: 0, coinsEarned: 0 };
@@ -97,9 +98,17 @@ export default function LearningPage() {
     
     if (isPlaying) {
       console.log('재생 중단');
-      speechSynthesis.cancel();
-      setIsPlaying(false);
-      setCurrentPlayingId(null);
+      if (playbackController) {
+        playbackController.stop();
+      } else {
+        speechSynthesis.cancel();
+        setIsPlaying(false);
+        setCurrentPlayingId(null);
+      }
+      toast({
+        title: "재생 중단",
+        description: "음성 재생이 중단되었습니다.",
+      });
       return;
     }
 
@@ -125,6 +134,18 @@ export default function LearningPage() {
       let repeatCount = 0;
       let playingState = true; // 로컬 상태로 관리
       const maxRepeats = 3; // 각 단어를 3번씩 읽기
+
+      // 정지 함수
+      const stopPlaying = () => {
+        playingState = false;
+        speechSynthesis.cancel();
+        setIsPlaying(false);
+        setCurrentPlayingId(null);
+        setPlaybackController(null);
+      };
+
+      // 컨트롤러 설정
+      setPlaybackController({ stop: stopPlaying });
 
       const playNext = async () => {
         console.log(`playNext 호출됨 - currentIndex: ${currentIndex}, playingState: ${playingState}, items.length: ${items.length}`);
@@ -158,15 +179,32 @@ export default function LearningPage() {
             repeatCount++;
             
             // 첫 번째 반복이 끝난 후 단어 학습 처리 및 코인 획득
-            if (repeatCount === 1 && activeSection === 'words' && !item.isLearned) {
+            if (repeatCount === 1 && activeSection === 'words') {
               try {
+                console.log(`단어 학습 처리 시도: ${item.text}, isLearned: ${item.isLearned}`);
                 await learnWord(item.id);
+                console.log(`단어 학습 처리 완료: ${item.text}`);
                 toast({
                   title: "학습 완료!",
                   description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
                 });
               } catch (error) {
                 console.error('단어 학습 처리 오류:', error);
+              }
+            }
+            
+            // 문장 학습 처리
+            if (repeatCount === 1 && activeSection === 'sentences') {
+              try {
+                console.log(`문장 학습 처리 시도: ${item.text}, isLearned: ${item.isLearned}`);
+                await learnSentence(item.id);
+                console.log(`문장 학습 처리 완료: ${item.text}`);
+                toast({
+                  title: "학습 완료!",
+                  description: `"${item.text}" 문장을 학습했습니다. +1 코인`,
+                });
+              } catch (error) {
+                console.error('문장 학습 처리 오류:', error);
               }
             }
             
@@ -200,13 +238,20 @@ export default function LearningPage() {
           
           utterance.onerror = (event) => {
             console.error('Speech synthesis error:', event);
-            toast({
-              title: "오류",
-              description: "음성 재생 중 오류가 발생했습니다.",
-            });
-            playingState = false;
-            setIsPlaying(false);
-            setCurrentPlayingId(null);
+            // 에러 발생 시 자동으로 다음으로 넘어가기
+            if (playingState) {
+              repeatCount = 0;
+              currentIndex++;
+              setTimeout(() => {
+                if (currentIndex < items.length && playingState) {
+                  playNext();
+                } else {
+                  playingState = false;
+                  setIsPlaying(false);
+                  setCurrentPlayingId(null);
+                }
+              }, 500);
+            }
           };
           
           console.log('speechSynthesis.speak 호출');
@@ -344,8 +389,8 @@ export default function LearningPage() {
                   </div>
 
                   {/* Word */}
-                  <div className="text-center mt-4">
-                    <div className="text-2xl font-bold text-gray-800 mb-2">{word.text}</div>
+                  <div className="flex items-center justify-center h-full min-h-[80px]">
+                    <div className="text-2xl font-bold text-gray-800 text-center">{word.text}</div>
                   </div>
                 </motion.div>
               ))}
