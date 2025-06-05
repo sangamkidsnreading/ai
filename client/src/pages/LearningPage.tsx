@@ -76,12 +76,12 @@ export default function LearningPage() {
       const speak = () => {
         if (count < times) {
           const utterance = new SpeechSynthesisUtterance(text);
-          utterance.rate = 0.8;
+          utterance.rate = 1.2;
           utterance.lang = 'en-US';
           utterance.onend = () => {
             count++;
             if (count < times) {
-              setTimeout(speak, 500);
+              setTimeout(speak, 300);
             } else {
               setCurrentPlayingId(null);
             }
@@ -205,7 +205,7 @@ export default function LearningPage() {
           }
           
           const utterance = new SpeechSynthesisUtterance(item.text);
-          utterance.rate = 0.8;
+          utterance.rate = 1.2;
           utterance.lang = 'en-US';
           
           utterance.onstart = () => {
@@ -251,12 +251,12 @@ export default function LearningPage() {
             }
             
             if (repeatCount < maxRepeats && playingState) {
-              // 같은 단어를 다시 읽기 (0.5초 간격)
+              // 같은 단어를 다시 읽기 (300ms 간격)
               setTimeout(() => {
                 if (playingState) {
                   playNext();
                 }
-              }, 500);
+              }, 300);
             } else {
               // 다음 단어로 이동
               repeatCount = 0;
@@ -274,7 +274,7 @@ export default function LearningPage() {
                     description: `${items.length}개의 ${activeSection === 'words' ? '단어' : '문장'}를 모두 학습했습니다.`,
                   });
                 }
-              }, 1000);
+              }, 500);
             }
           };
           
