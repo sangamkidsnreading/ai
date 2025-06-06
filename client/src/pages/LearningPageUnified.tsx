@@ -145,7 +145,7 @@ export default function LearningPageUnified() {
     }
   };
 
-  const handleStartLearning = () => {
+  const handleStartWords = () => {
     if (isPlaying) {
       speechSynthesis.cancel();
       setIsPlaying(false);
@@ -158,12 +158,11 @@ export default function LearningPageUnified() {
     }
 
     const wordsToPlay = words.slice(0, 10);
-    const sentencesToPlay = sentences.slice(0, 3);
     
-    if (wordsToPlay.length === 0 && sentencesToPlay.length === 0) {
+    if (wordsToPlay.length === 0) {
       toast({
         title: "알림",
-        description: "재생할 학습 콘텐츠가 없습니다.",
+        description: "재생할 단어가 없습니다.",
       });
       return;
     }
@@ -172,14 +171,11 @@ export default function LearningPageUnified() {
     
     let currentItemIndex = 0;
     let currentRepeatCount = 0;
-    let currentSection = 'words'; // 'words' or 'sentences'
     const maxRepeats = 3;
 
     const playNext = () => {
-      const currentItems = currentSection === 'words' ? wordsToPlay : sentencesToPlay;
-      
-      if (currentItemIndex < currentItems.length) {
-        const item = currentItems[currentItemIndex];
+      if (currentItemIndex < wordsToPlay.length) {
+        const item = wordsToPlay[currentItemIndex];
         setCurrentPlayingId(item.id.toString());
         
         const utterance = new SpeechSynthesisUtterance(item.text);
@@ -191,21 +187,12 @@ export default function LearningPageUnified() {
           
           // 3번째 읽기 완료 시 코인 추가 및 학습 처리
           if (currentRepeatCount === maxRepeats) {
-            if (currentSection === 'words') {
-              addCoinsImmediately(1);
-              learnWord(item.id);
-              toast({
-                title: "단어 학습 완료!",
-                description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
-              });
-            } else {
-              addCoinsImmediately(3);
-              learnSentence(item.id);
-              toast({
-                title: "문장 학습 완료!",
-                description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
-              });
-            }
+            addCoinsImmediately(1);
+            learnWord(item.id);
+            toast({
+              title: "단어 학습 완료!",
+              description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
+            });
             
             // 다음 아이템으로 이동
             currentItemIndex++;
@@ -216,26 +203,16 @@ export default function LearningPageUnified() {
             if (currentRepeatCount < maxRepeats) {
               // 같은 아이템을 다시 읽기
               playNext();
-            } else if (currentItemIndex < currentItems.length) {
+            } else if (currentItemIndex < wordsToPlay.length) {
               // 다음 아이템 읽기
               playNext();
-            } else if (currentSection === 'words' && sentencesToPlay.length > 0) {
-              // 단어 섹션 완료, 문장 섹션으로 이동
-              currentSection = 'sentences';
-              currentItemIndex = 0;
-              currentRepeatCount = 0;
-              toast({
-                title: "단어 학습 완료!",
-                description: "이제 문장을 학습합니다.",
-              });
-              playNext();
             } else {
-              // 모든 학습 완료
+              // 모든 단어 학습 완료
               setIsPlaying(false);
               setCurrentPlayingId(null);
               toast({
-                title: "모든 학습 완료!",
-                description: "오늘의 학습을 모두 완료했습니다.",
+                title: "단어 학습 완료!",
+                description: "모든 단어를 완료했습니다.",
               });
             }
           }, 300);
@@ -245,10 +222,94 @@ export default function LearningPageUnified() {
       }
     };
 
-    // 학습 시작 안내
     toast({
-      title: "학습 시작!",
-      description: "단어부터 시작합니다. 각 단어를 3번씩 읽어드립니다.",
+      title: "단어 학습 시작!",
+      description: "각 단어를 3번씩 읽어드립니다.",
+    });
+    
+    setTimeout(playNext, 500);
+  };
+
+  const handleStartSentences = () => {
+    if (isPlaying) {
+      speechSynthesis.cancel();
+      setIsPlaying(false);
+      setCurrentPlayingId(null);
+      toast({
+        title: "재생 중단",
+        description: "음성 재생이 중단되었습니다.",
+      });
+      return;
+    }
+
+    const sentencesToPlay = sentences.slice(0, 3);
+    
+    if (sentencesToPlay.length === 0) {
+      toast({
+        title: "알림",
+        description: "재생할 문장이 없습니다.",
+      });
+      return;
+    }
+
+    setIsPlaying(true);
+    
+    let currentItemIndex = 0;
+    let currentRepeatCount = 0;
+    const maxRepeats = 3;
+
+    const playNext = () => {
+      if (currentItemIndex < sentencesToPlay.length) {
+        const item = sentencesToPlay[currentItemIndex];
+        setCurrentPlayingId(item.id.toString());
+        
+        const utterance = new SpeechSynthesisUtterance(item.text);
+        utterance.rate = 0.8;
+        utterance.lang = 'en-US';
+        
+        utterance.onend = () => {
+          currentRepeatCount++;
+          
+          // 3번째 읽기 완료 시 코인 추가 및 학습 처리
+          if (currentRepeatCount === maxRepeats) {
+            addCoinsImmediately(3);
+            learnSentence(item.id);
+            toast({
+              title: "문장 학습 완료!",
+              description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
+            });
+            
+            // 다음 아이템으로 이동
+            currentItemIndex++;
+            currentRepeatCount = 0;
+          }
+          
+          setTimeout(() => {
+            if (currentRepeatCount < maxRepeats) {
+              // 같은 아이템을 다시 읽기
+              playNext();
+            } else if (currentItemIndex < sentencesToPlay.length) {
+              // 다음 아이템 읽기
+              playNext();
+            } else {
+              // 모든 문장 학습 완료
+              setIsPlaying(false);
+              setCurrentPlayingId(null);
+              toast({
+                title: "문장 학습 완료!",
+                description: "모든 문장을 완료했습니다.",
+              });
+            }
+          }, 300);
+        };
+        
+        speechSynthesis.speak(utterance);
+      }
+    };
+
+    toast({
+      title: "문장 학습 시작!",
+      description: "각 문장을 3번씩 읽어드립니다.",
     });
     
     setTimeout(playNext, 500);
@@ -291,34 +352,30 @@ export default function LearningPageUnified() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          {/* Start Button */}
-          <div className="flex justify-end items-center mb-6">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleStartLearning}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all ${
-                isPlaying
-                  ? 'bg-red-500 text-white hover:bg-red-600'
-                  : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
-              }`}
-            >
-              {isPlaying ? (
-                <>⏹️ Stop</>
-              ) : (
-                <>🎯 Start</>
-              )}
-            </motion.button>
-          </div>
+
 
           {/* Words Section */}
           <div className="mb-8">
-            <h3 className="text-lg font-bold text-purple-700 mb-4 flex items-center gap-2">
-              <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-xs">W</span>
-              </div>
-              Words
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-purple-700 flex items-center gap-2">
+                <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">W</span>
+                </div>
+                Words
+              </h3>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleStartWords}
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                  isPlaying
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : 'bg-purple-500 text-white hover:bg-purple-600'
+                }`}
+              >
+                {isPlaying ? '⏹️ Stop' : '🎯 Start'}
+              </motion.button>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {words.slice(0, 10).map((word) => (
                 <motion.div
@@ -362,12 +419,26 @@ export default function LearningPageUnified() {
 
           {/* Sentences Section */}
           <div className="mt-8 border-t-2 border-gray-200 pt-6">
-            <h3 className="text-lg font-bold text-green-700 mb-4 flex items-center gap-2">
-              <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-xs">S</span>
-              </div>
-              Sentences
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-green-700 flex items-center gap-2">
+                <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">S</span>
+                </div>
+                Sentences
+              </h3>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleStartSentences}
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                  isPlaying
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
+              >
+                {isPlaying ? '⏹️ Stop' : '🎯 Start'}
+              </motion.button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {sentences.slice(0, 3).map((sentence) => (
                 <motion.div
