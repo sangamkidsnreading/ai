@@ -528,13 +528,13 @@ export default function LearningPage() {
               </div>
               Sentences
             </h3>
-            {getFilteredSentences().length === 0 ? (
+            {sentences.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
-                <p>선택한 조건에 해당하는 문장이 없습니다.</p>
+                <p>문장이 없습니다.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {getFilteredSentences().slice(0, 3).map((sentence) => (
+                {sentences.slice(0, 3).map((sentence) => (
                   <motion.div
                     key={sentence.id}
                     whileHover={{ scale: 1.02 }}
