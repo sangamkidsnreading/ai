@@ -148,58 +148,107 @@ export default function DashboardPage() {
         })}
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Weekly Learning Progress */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="bg-white rounded-xl p-6 shadow-lg"
-        >
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <BarChart3 size={20} />
-            주간 학습 현황
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={weeklyData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="words" fill="#3B82F6" name="단어" />
-              <Bar dataKey="sentences" fill="#10B981" name="문장" />
-            </BarChart>
-          </ResponsiveContainer>
-        </motion.div>
-
-        {/* Coin Trend */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="bg-white rounded-xl p-6 shadow-lg"
-        >
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <TrendingUp size={20} />
-            코인 획득 추이
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={weeklyData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="coins"
-                stroke="#F59E0B"
-                strokeWidth={3}
-                dot={{ fill: '#F59E0B', strokeWidth: 2, r: 6 }}
-                name="코인"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </motion.div>
-      </div>
+      {/* Learning Calendar */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-xl p-6 shadow-lg mb-8"
+      >
+        <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
+          <Calendar size={20} />
+          월간 학습 달력
+          <span className="text-sm text-gray-500 ml-auto">
+            <span className="inline-block w-3 h-3 bg-yellow-400 rounded-full mr-1"></span>
+            30코인 이상: 목표 달성!
+          </span>
+        </h3>
+        
+        <div className="grid grid-cols-7 gap-2 mb-4">
+          {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
+            <div key={day} className="p-2 text-center text-sm font-semibold text-gray-500">
+              {day}
+            </div>
+          ))}
+        </div>
+        
+        <div className="grid grid-cols-7 gap-2">
+          {Array.from({ length: 30 }, (_, index) => {
+            const day = index + 1;
+            const dayData = dayProgress.find(d => d.day === day);
+            const coins = dayData?.coinsEarned || 0;
+            const isGoalAchieved = coins >= 30;
+            const isToday = day === currentDay;
+            const hasActivity = coins > 0;
+            
+            return (
+              <motion.div
+                key={day}
+                whileHover={{ scale: 1.05 }}
+                className={`
+                  p-3 rounded-lg border-2 text-center cursor-pointer transition-all
+                  ${isToday 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : isGoalAchieved 
+                      ? 'border-yellow-400 bg-yellow-100' 
+                      : hasActivity 
+                        ? 'border-green-200 bg-green-50' 
+                        : 'border-gray-200 bg-gray-50'
+                  }
+                `}
+              >
+                <div className={`text-sm font-bold ${
+                  isToday ? 'text-blue-600' : 
+                  isGoalAchieved ? 'text-yellow-700' : 
+                  hasActivity ? 'text-green-600' : 'text-gray-400'
+                }`}>
+                  {day}
+                </div>
+                
+                {hasActivity && (
+                  <div className="mt-1">
+                    <div className={`text-xs font-semibold ${
+                      isGoalAchieved ? 'text-yellow-600' : 'text-green-600'
+                    }`}>
+                      {coins}코인
+                    </div>
+                    
+                    {isGoalAchieved && (
+                      <div className="text-yellow-500 text-xs mt-1">
+                        ⭐
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {isToday && (
+                  <div className="text-blue-500 text-xs mt-1">
+                    오늘
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+        
+        <div className="mt-6 flex flex-wrap gap-4 text-sm text-gray-600">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 border-2 border-gray-200 bg-gray-50 rounded"></div>
+            학습 안함
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 border-2 border-green-200 bg-green-50 rounded"></div>
+            학습 완료 (30코인 미만)
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 border-2 border-yellow-400 bg-yellow-100 rounded"></div>
+            목표 달성 (30코인 이상)
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 border-2 border-blue-500 bg-blue-50 rounded"></div>
+            오늘
+          </div>
+        </div>
+      </motion.div>
 
       {/* Level Progress and Badges */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
