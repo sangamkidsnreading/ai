@@ -370,7 +370,7 @@ export default function LearningPageUnified() {
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                   isPlaying
                     ? 'bg-red-500 text-white hover:bg-red-600'
-                    : 'bg-purple-500 text-white hover:bg-purple-600'
+                    : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
                 }`}
               >
                 {isPlaying ? '⏹️ Stop' : '🎯 Start'}
@@ -433,7 +433,7 @@ export default function LearningPageUnified() {
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                   isPlaying
                     ? 'bg-red-500 text-white hover:bg-red-600'
-                    : 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
                 }`}
               >
                 {isPlaying ? '⏹️ Stop' : '🎯 Start'}
