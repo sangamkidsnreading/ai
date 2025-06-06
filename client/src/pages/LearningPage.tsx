@@ -40,6 +40,7 @@ export default function LearningPage() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSentenceId, setRecordingSentenceId] = useState<string | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [recordedAudios, setRecordedAudios] = useState<{[key: string]: string}>({});
 
   // Get progress for the selected day, or current day if no specific day is selected
   const displayDay = selectedDay > 0 ? selectedDay : currentDay;
@@ -114,9 +115,11 @@ export default function LearningPage() {
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
         
-        // Play the recorded audio
-        const audio = new Audio(audioUrl);
-        audio.play();
+        // Save the recorded audio for this sentence
+        setRecordedAudios(prev => ({
+          ...prev,
+          [sentence.id.toString()]: audioUrl
+        }));
         
         toast({
           title: "녹음 완료",
@@ -813,9 +816,7 @@ export default function LearningPage() {
                   <motion.div
                     key={sentence.id}
                     whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleSentenceClick(sentence)}
-                    className={`relative p-6 rounded-xl cursor-pointer transition-all card-hover ${
+                    className={`relative p-6 rounded-xl transition-all card-hover ${
                       sentence.isLearned
                         ? 'bg-gradient-to-br from-amber-50 to-amber-100'
                         : 'bg-gradient-to-br from-orange-50 to-orange-100'
@@ -831,20 +832,55 @@ export default function LearningPage() {
                         <div className="text-xl font-semibold text-gray-800">{sentence.text}</div>
                       </div>
                       
+                      {/* Play Button */}
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleSentenceClick(sentence)}
+                        className="flex items-center justify-center w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors mr-2"
+                        title="문장 듣기"
+                      >
+                        ▶️
+                      </motion.button>
+
                       {/* Recording Button */}
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => handleSentenceRecording(sentence)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSentenceRecording(sentence);
+                        }}
                         className={`flex items-center justify-center w-12 h-12 rounded-full transition-colors ${
                           isRecording && recordingSentenceId === sentence.id.toString()
                             ? 'bg-red-600 animate-pulse'
                             : 'bg-red-500 hover:bg-red-600'
-                        } text-white`}
+                        } text-white mr-2`}
                         title={isRecording && recordingSentenceId === sentence.id.toString() ? "녹음 중단" : "문장 녹음하기"}
                       >
                         {isRecording && recordingSentenceId === sentence.id.toString() ? '⏹️' : '🎤'}
                       </motion.button>
+
+                      {/* Play Recorded Audio Button */}
+                      {recordedAudios[sentence.id.toString()] && (
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const audio = new Audio(recordedAudios[sentence.id.toString()]);
+                            audio.play();
+                            toast({
+                              title: "녹음 재생",
+                              description: "내 녹음을 재생합니다.",
+                            });
+                          }}
+                          className="flex items-center justify-center w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors"
+                          title="내 녹음 듣기"
+                        >
+                          🔊
+                        </motion.button>
+                      )}
                     </div>
                   </motion.div>
                 ))}
