@@ -121,32 +121,7 @@ export default function DashboardPage() {
         <p className="text-gray-600">당신의 학습 여정을 한눈에 확인하세요</p>
       </motion.div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                  <p className="text-sm text-green-600 font-medium">{stat.change}</p>
-                </div>
-                <div className={`${stat.color} p-3 rounded-lg`}>
-                  <Icon className="text-white" size={24} />
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
+
 
       {/* Learning Calendar */}
       <motion.div
@@ -336,66 +311,38 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Level Progress and Badges */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Level Progress */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl p-6 shadow-lg"
+          className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 shadow-lg border border-blue-200"
         >
           <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Star size={20} />
+            <Star size={20} className="text-blue-500" />
             레벨 진행도
           </h3>
           <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2">
+            <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
               Level {userStats.currentLevel}
             </div>
-            <ResponsiveContainer width="100%" height={150}>
-              <RadialBarChart cx="50%" cy="50%" innerRadius="60%" outerRadius="90%" data={levelProgressData}>
-                <RadialBar dataKey="value" cornerRadius={10} fill="#3B82F6" />
-              </RadialBarChart>
-            </ResponsiveContainer>
-            <p className="text-sm text-gray-600 mt-2">
+            <div className="relative w-32 h-32 mx-auto mb-4">
+              <div className="absolute inset-0 rounded-full bg-gray-200"></div>
+              <div 
+                className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
+                style={{
+                  background: `conic-gradient(from 0deg, #3B82F6 0deg, #8B5CF6 ${(userStats.totalCoins % 100) * 3.6}deg, #E5E7EB ${(userStats.totalCoins % 100) * 3.6}deg)`
+                }}
+              ></div>
+              <div className="absolute inset-2 rounded-full bg-white flex items-center justify-center">
+                <span className="text-xl font-bold text-gray-700">
+                  {userStats.totalCoins % 100}%
+                </span>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600">
               다음 레벨까지 {100 - (userStats.totalCoins % 100)}코인
             </p>
-          </div>
-        </motion.div>
-
-        {/* Learning Completion Rate */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-6 shadow-lg"
-        >
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Target size={20} />
-            학습 완료율
-          </h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie
-                data={progressData}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={80}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {progressData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.fill} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => `${Number(value).toFixed(1)}%`} />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="text-center mt-2">
-            <p className="text-2xl font-bold text-green-600">
-              {progressData[0]?.value.toFixed(1)}%
-            </p>
-            <p className="text-sm text-gray-600">완료율</p>
           </div>
         </motion.div>
 
@@ -403,27 +350,27 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl p-6 shadow-lg"
+          transition={{ delay: 0.1 }}
+          className="bg-gradient-to-br from-yellow-50 to-orange-100 rounded-xl p-6 shadow-lg border border-yellow-200"
         >
           <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <Award size={20} />
+            <Award size={20} className="text-yellow-500" />
             뱃지 컬렉션
           </h3>
           <div className="text-center mb-4">
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
               {earnedBadges.length}/{totalBadges}
             </div>
             <p className="text-sm text-gray-600">획득한 뱃지</p>
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3">
             {userStats.badges.slice(0, 6).map((badge) => (
               <motion.div
                 key={badge.id}
                 whileHover={{ scale: 1.1 }}
-                className={`p-3 rounded-lg text-center transition-all ${
+                className={`p-3 rounded-xl text-center transition-all shadow-sm ${
                   badge.earned
-                    ? 'bg-yellow-100 border-2 border-yellow-300'
+                    ? 'bg-gradient-to-br from-yellow-200 to-yellow-300 border-2 border-yellow-400'
                     : 'bg-gray-100 border-2 border-gray-200 opacity-50'
                 }`}
               >
@@ -437,31 +384,7 @@ export default function DashboardPage() {
         </motion.div>
       </div>
 
-      {/* Today's Achievement */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="gradient-bg rounded-xl p-6 text-white shadow-lg mb-8"
-      >
-        <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <Trophy size={24} />
-          오늘의 성과 (Day {currentDay})
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="text-center">
-            <div className="text-3xl font-bold">{currentDayData.wordsLearned}</div>
-            <div className="text-sm opacity-90">학습한 단어</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold">{currentDayData.sentencesLearned}</div>
-            <div className="text-sm opacity-90">학습한 문장</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold">{currentDayData.coinsEarned}</div>
-            <div className="text-sm opacity-90">획득한 코인</div>
-          </div>
-        </div>
-      </motion.div>
+
 
       {/* 노력왕 전체 랭킹 */}
       <motion.div
