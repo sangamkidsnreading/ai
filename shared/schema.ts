@@ -49,6 +49,7 @@ export const dayProgress = pgTable("day_progress", {
   wordsLearned: integer("words_learned").notNull().default(0),
   sentencesLearned: integer("sentences_learned").notNull().default(0),
   coinsEarned: integer("coins_earned").notNull().default(0),
+  bonusCoins: integer("bonus_coins").notNull().default(0),
   date: text("date").notNull(), // ISO date string
 });
 

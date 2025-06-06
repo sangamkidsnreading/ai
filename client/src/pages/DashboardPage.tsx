@@ -176,7 +176,10 @@ export default function DashboardPage() {
             const day = index + 1;
             const dayData = dayProgress.find(d => d.day === day);
             const coins = dayData?.coinsEarned || 0;
+            const bonusCoins = dayData?.bonusCoins || 0;
+            const totalCoins = coins + bonusCoins;
             const isGoalAchieved = coins >= 30;
+            const hasBonus = bonusCoins > 0;
             const isToday = day === currentDay;
             const hasActivity = coins > 0;
             
@@ -185,19 +188,29 @@ export default function DashboardPage() {
                 key={day}
                 whileHover={{ scale: 1.05 }}
                 className={`
-                  p-3 rounded-lg border-2 text-center cursor-pointer transition-all
+                  p-3 rounded-lg border-2 text-center cursor-pointer transition-all relative
                   ${isToday 
                     ? 'border-blue-500 bg-blue-50' 
-                    : isGoalAchieved 
-                      ? 'border-yellow-400 bg-yellow-100' 
-                      : hasActivity 
-                        ? 'border-green-200 bg-green-50' 
-                        : 'border-gray-200 bg-gray-50'
+                    : hasBonus
+                      ? 'border-amber-500 bg-gradient-to-br from-yellow-100 to-amber-100'
+                      : isGoalAchieved 
+                        ? 'border-yellow-400 bg-yellow-100' 
+                        : hasActivity 
+                          ? 'border-green-200 bg-green-50' 
+                          : 'border-gray-200 bg-gray-50'
                   }
                 `}
               >
+                {/* Crown icon for bonus achieved */}
+                {hasBonus && (
+                  <div className="absolute -top-1 -right-1 text-amber-500 text-sm">
+                    👑
+                  </div>
+                )}
+                
                 <div className={`text-sm font-bold ${
                   isToday ? 'text-blue-600' : 
+                  hasBonus ? 'text-amber-700' :
                   isGoalAchieved ? 'text-yellow-700' : 
                   hasActivity ? 'text-green-600' : 'text-gray-400'
                 }`}>
@@ -207,12 +220,19 @@ export default function DashboardPage() {
                 {hasActivity && (
                   <div className="mt-1">
                     <div className={`text-xs font-semibold ${
+                      hasBonus ? 'text-amber-600' :
                       isGoalAchieved ? 'text-yellow-600' : 'text-green-600'
                     }`}>
-                      {coins}코인
+                      {totalCoins}코인
                     </div>
                     
-                    {isGoalAchieved && (
+                    {hasBonus && (
+                      <div className="text-amber-500 text-xs mt-1">
+                        +{bonusCoins} 보너스
+                      </div>
+                    )}
+                    
+                    {isGoalAchieved && !hasBonus && (
                       <div className="text-yellow-500 text-xs mt-1">
                         ⭐
                       </div>
@@ -242,6 +262,12 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 border-2 border-yellow-400 bg-yellow-100 rounded"></div>
             목표 달성 (30코인 이상)
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 border-2 border-amber-500 bg-gradient-to-br from-yellow-100 to-amber-100 rounded relative">
+              <div className="absolute -top-1 -right-1 text-amber-500 text-xs">👑</div>
+            </div>
+            보너스 달성 (30코인 + 10보너스)
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 border-2 border-blue-500 bg-blue-50 rounded"></div>

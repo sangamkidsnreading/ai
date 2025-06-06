@@ -24,6 +24,7 @@ interface DayProgress {
   wordsLearned: number;
   sentencesLearned: number;
   coinsEarned: number;
+  bonusCoins: number;
   date: string;
 }
 

@@ -562,20 +562,42 @@ export class DatabaseStorage implements IStorage {
 
     const matchingProgress = existing.find(p => p.day === insertProgress.day);
 
+    let finalProgress: DayProgress;
+
     if (matchingProgress) {
       const [updated] = await db
         .update(dayProgress)
         .set(insertProgress)
         .where(eq(dayProgress.id, matchingProgress.id))
         .returning();
-      return updated;
+      finalProgress = updated;
     } else {
       const [progress] = await db
         .insert(dayProgress)
         .values(insertProgress)
         .returning();
-      return progress;
+      finalProgress = progress;
     }
+
+    // Check if 30 coins goal is achieved and bonus hasn't been awarded yet
+    const totalDailyCoins = finalProgress.coinsEarned;
+    const currentBonus = finalProgress.bonusCoins || 0;
+    
+    if (totalDailyCoins >= 30 && currentBonus === 0) {
+      // Award bonus 10 coins
+      const [bonusUpdated] = await db
+        .update(dayProgress)
+        .set({ bonusCoins: 10 })
+        .where(eq(dayProgress.id, finalProgress.id))
+        .returning();
+      
+      // Also update user's total coins
+      await this.awardCoins(insertProgress.userId, 10);
+      
+      finalProgress = bonusUpdated;
+    }
+
+    return finalProgress;
   }
 
   // User stats methods
