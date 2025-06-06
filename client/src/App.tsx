@@ -9,7 +9,7 @@ import { useAuthStore } from './stores/authStore';
 import { useLearningStore } from './stores/learningStore';
 
 import LoginPage from './pages/LoginPage';
-import LearningPageNew from './pages/LearningPageNew';
+import LearningPageUnified from './pages/LearningPageUnified';
 import LevelSelectPage from './pages/LevelSelectPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
@@ -35,7 +35,7 @@ function AuthenticatedApp() {
   const renderContent = () => {
     switch (activeSection) {
       case 'learning':
-        return <LearningPageNew />;
+        return <LearningPageUnified />;
       case 'dashboard':
         return <DashboardPage />;
       case 'profile':
@@ -47,7 +47,7 @@ function AuthenticatedApp() {
           </ProtectedRoute>
         );
       default:
-        return <LearningPageNew />;
+        return <LearningPageUnified />;
     }
   };
 

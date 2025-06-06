@@ -211,49 +211,31 @@ export default function LearningPageNew() {
           </div>
         </motion.div>
 
-        {/* Tab Selection */}
+        {/* Section Headers */}
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <motion.button
-            onClick={() => setActiveSection('words')}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`p-4 rounded-xl text-left transition-all ${
-              activeSection === 'words'
-                ? 'bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300'
-                : 'bg-white border-2 border-gray-200 hover:border-purple-200'
-            }`}
-          >
+          <div className="p-4 rounded-xl bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-sm">W</span>
               </div>
               <div>
                 <h3 className="font-bold text-purple-700">Words</h3>
-                <p className="text-xs text-purple-600">새로운 단어 5개와 문장 2개를 학습해보세요!</p>
+                <p className="text-xs text-purple-600">오늘의 단어 10개를 학습해보세요!</p>
               </div>
             </div>
-          </motion.button>
+          </div>
           
-          <motion.button
-            onClick={() => setActiveSection('sentences')}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`p-4 rounded-xl text-left transition-all ${
-              activeSection === 'sentences'
-                ? 'bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300'
-                : 'bg-white border-2 border-gray-200 hover:border-green-200'
-            }`}
-          >
+          <div className="p-4 rounded-xl bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-sm">S</span>
               </div>
               <div>
                 <h3 className="font-bold text-green-700">Sentences</h3>
-                <p className="text-xs text-green-600">구조한 학습이 성공의 열쇠입니다. 화이팅!</p>
+                <p className="text-xs text-green-600">오늘의 문장 3개를 학습해보세요!</p>
               </div>
             </div>
-          </motion.button>
+          </div>
         </div>
 
         {/* Content Section */}
