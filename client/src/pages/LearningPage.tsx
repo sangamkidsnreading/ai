@@ -521,12 +521,12 @@ export default function LearningPage() {
           </div>
 
           {/* Sentences Section */}
-          <div>
+          <div className="mt-8 border-t-2 border-gray-200 pt-6">
             <h3 className="text-lg font-bold text-green-700 mb-4 flex items-center gap-2">
               <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-xs">S</span>
               </div>
-              Sentences
+              Sentences (문장 섹션이 여기 있습니다!)
             </h3>
             {sentences.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
