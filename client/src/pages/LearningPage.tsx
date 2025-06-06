@@ -41,7 +41,6 @@ export default function LearningPage() {
   const [recordingSentenceId, setRecordingSentenceId] = useState<string | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [recordedAudios, setRecordedAudios] = useState<{[key: string]: string}>({});
-  const [sentenceEmojis, setSentenceEmojis] = useState<{[key: string]: string[]}>({});
 
   // Get progress for the selected day, or current day if no specific day is selected
   const displayDay = selectedDay > 0 ? selectedDay : currentDay;
@@ -75,114 +74,7 @@ export default function LearningPage() {
     }
   };
 
-  // Word to emoji mapping
-  const getEmojiForWord = (word: string): string | null => {
-    const emojiMap: {[key: string]: string} = {
-      // Animals
-      'cat': '🐱', 'dog': '🐶', 'bird': '🐦', 'fish': '🐟', 'mouse': '🐭',
-      'cow': '🐄', 'pig': '🐷', 'horse': '🐴', 'sheep': '🐑', 'duck': '🦆',
-      'rabbit': '🐰', 'bear': '🐻', 'lion': '🦁', 'tiger': '🐯', 'elephant': '🐘',
-      
-      // Food
-      'pizza': '🍕', 'burger': '🍔', 'apple': '🍎', 'banana': '🍌', 'cake': '🎂',
-      'bread': '🍞', 'cheese': '🧀', 'egg': '🥚', 'milk': '🥛', 'water': '💧',
-      'ice': '🧊', 'coffee': '☕', 'tea': '🍵', 'cookie': '🍪', 'candy': '🍬',
-      
-      // Transportation
-      'car': '🚗', 'bus': '🚌', 'train': '🚂', 'plane': '✈️', 'bike': '🚲',
-      'ship': '🚢', 'rocket': '🚀', 'boat': '⛵', 'taxi': '🚕', 'truck': '🚚',
-      
-      // Nature
-      'sun': '☀️', 'moon': '🌙', 'star': '⭐', 'cloud': '☁️', 'rain': '🌧️',
-      'snow': '❄️', 'tree': '🌳', 'flower': '🌸', 'grass': '🌱', 'mountain': '⛰️',
-      
-      // Objects
-      'book': '📚', 'phone': '📱', 'computer': '💻', 'watch': '⌚', 'key': '🔑',
-      'ball': '⚽', 'gift': '🎁', 'music': '🎵', 'camera': '📷', 'lamp': '💡',
-      
-      // Body parts
-      'eye': '👁️', 'hand': '✋', 'foot': '🦶', 'heart': '❤️', 'face': '😊',
-      
-      // Actions
-      'love': '💕', 'happy': '😊', 'sad': '😢', 'angry': '😠', 'sleep': '😴',
-      'eat': '🍽️', 'drink': '🥤', 'run': '🏃', 'walk': '🚶', 'dance': '💃',
-      
-      // Numbers
-      'one': '1️⃣', 'two': '2️⃣', 'three': '3️⃣', 'four': '4️⃣', 'five': '5️⃣',
-      
-      // Colors
-      'red': '🔴', 'blue': '🔵', 'green': '🟢', 'yellow': '🟡', 'purple': '🟣',
-      
-      // Common words
-      'big': '🦣', 'small': '🐁', 'fast': '💨', 'slow': '🐌', 'hot': '🔥',
-      'cold': '🧊', 'good': '👍', 'bad': '👎', 'new': '✨', 'old': '🕰️',
-      'house': '🏠', 'school': '🏫', 'friend': '👫', 'family': '👨‍👩‍👧‍👦',
-      'money': '💰', 'time': '⏰', 'day': '🌅', 'night': '🌙', 'morning': '🌄',
-      
-      // Pronouns with fun representations
-      'I': '🙋‍♂️', 'you': '👤', 'we': '👥', 'they': '👫', 'he': '👨', 'she': '👩',
-      
-      // Common verbs
-      'am': '✨', 'are': '✨', 'is': '✨', 'have': '🤲', 'go': '🚶‍♂️',
-      
-      // Default cute emojis for unknown words
-      'and': '➕', 'the': '📝', 'a': '📄', 'an': '📄', 'to': '➡️',
-      'of': '📋', 'in': '📍', 'on': '🔛', 'at': '📌', 'for': '🎯'
-    };
-    
-    return emojiMap[word.toLowerCase()] || null;
-  };
 
-  // Extract representative emoji from sentence
-  const extractRepresentativeEmoji = (text: string): string => {
-    const words = text.toLowerCase().replace(/[.,!?]/g, '').split(' ');
-    
-    // Priority order: animals, food, objects, actions, then common words
-    const priorities = [
-      // Animals (highest priority)
-      'cat', 'dog', 'bird', 'fish', 'mouse', 'cow', 'pig', 'horse', 'sheep', 'duck',
-      'rabbit', 'bear', 'lion', 'tiger', 'elephant',
-      
-      // Food
-      'pizza', 'burger', 'apple', 'banana', 'cake', 'bread', 'cheese', 'egg', 'milk',
-      
-      // Transportation
-      'car', 'bus', 'train', 'plane', 'bike', 'ship', 'rocket', 'boat',
-      
-      // Objects
-      'book', 'phone', 'computer', 'ball', 'gift', 'music', 'camera',
-      
-      // Descriptive words
-      'big', 'small', 'fast', 'slow', 'hot', 'cold', 'good', 'bad',
-      
-      // Actions
-      'love', 'happy', 'sad', 'run', 'walk', 'eat', 'drink',
-      
-      // Common words (lower priority)
-      'I', 'you', 'we', 'they', 'he', 'she'
-    ];
-    
-    // Find the highest priority word that has an emoji
-    for (const priority of priorities) {
-      if (words.includes(priority)) {
-        const emoji = getEmojiForWord(priority);
-        if (emoji) {
-          return emoji;
-        }
-      }
-    }
-    
-    // If no priority word found, use first word with emoji
-    for (const word of words) {
-      const emoji = getEmojiForWord(word);
-      if (emoji) {
-        return emoji;
-      }
-    }
-    
-    // Default cute emoji
-    return '✨';
-  };
 
   // Recording functionality
   const handleSentenceRecording = async (sentence: any) => {
@@ -231,16 +123,9 @@ export default function LearningPage() {
           [sentence.id.toString()]: audioUrl
         }));
 
-        // Extract and save representative emoji for this sentence
-        const emoji = extractRepresentativeEmoji(sentence.text);
-        setSentenceEmojis(prev => ({
-          ...prev,
-          [sentence.id.toString()]: [emoji]
-        }));
-        
         toast({
           title: "녹음 완료",
-          description: `"${sentence.text}" 녹음이 완료되었습니다. ${emoji}`,
+          description: `"${sentence.text}" 녹음이 완료되었습니다.`,
         });
 
         // Stop all tracks to release microphone
@@ -948,24 +833,7 @@ export default function LearningPage() {
                       <div className="flex-1">
                         <div className="text-xl font-semibold text-gray-800">{sentence.text}</div>
                         
-                        {/* Emoji Display */}
-                        {sentenceEmojis[sentence.id.toString()] && (
-                          <div className="mt-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200 flex items-center gap-3">
-                            <div className="text-sm text-gray-600">녹음 완료:</div>
-                            <motion.div
-                              initial={{ scale: 0, rotate: 0 }}
-                              animate={{ scale: 1, rotate: 360 }}
-                              transition={{ 
-                                duration: 0.6,
-                                type: "spring",
-                                stiffness: 150 
-                              }}
-                              className="text-4xl"
-                            >
-                              {sentenceEmojis[sentence.id.toString()][0]}
-                            </motion.div>
-                          </div>
-                        )}
+
                       </div>
                       
                       {/* Play Button */}
