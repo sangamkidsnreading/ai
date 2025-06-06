@@ -121,6 +121,33 @@ export default function DashboardPage() {
         <p className="text-gray-600">당신의 학습 여정을 한눈에 확인하세요</p>
       </motion.div>
 
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {stats.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <motion.div
+              key={stat.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  <p className="text-sm text-green-600 font-medium">{stat.change}</p>
+                </div>
+                <div className={`${stat.color} p-3 rounded-lg`}>
+                  <Icon className="text-white" size={24} />
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
 
 
       {/* Learning Calendar */}
