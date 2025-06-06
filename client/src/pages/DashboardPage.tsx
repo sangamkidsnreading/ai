@@ -203,7 +203,7 @@ export default function DashboardPage() {
               >
                 {/* Crown icon for bonus achieved */}
                 {hasBonus && (
-                  <div className="absolute -top-1 -right-1 text-amber-500 text-sm">
+                  <div className="absolute -top-2 -right-2 text-amber-500 text-lg z-10">
                     👑
                   </div>
                 )}
@@ -264,8 +264,8 @@ export default function DashboardPage() {
             목표 달성 (30코인 이상)
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 border-2 border-amber-500 bg-gradient-to-br from-yellow-100 to-amber-100 rounded relative">
-              <div className="absolute -top-1 -right-1 text-amber-500 text-xs">👑</div>
+            <div className="w-4 h-4 border-2 border-amber-500 bg-gradient-to-br from-yellow-100 to-amber-100 rounded relative">
+              <div className="absolute -top-2 -right-2 text-amber-500 text-sm">👑</div>
             </div>
             보너스 달성 (30코인 + 10보너스)
           </div>
