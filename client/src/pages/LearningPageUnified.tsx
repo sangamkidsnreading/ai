@@ -251,32 +251,7 @@ export default function LearningPageUnified() {
           </div>
         </motion.div>
 
-        {/* Section Headers */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="p-4 rounded-xl bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">W</span>
-              </div>
-              <div>
-                <h3 className="font-bold text-purple-700">Words</h3>
-                <p className="text-xs text-purple-600">오늘의 단어 10개를 학습해보세요!</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-4 rounded-xl bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S</span>
-              </div>
-              <div>
-                <h3 className="font-bold text-green-700">Sentences</h3>
-                <p className="text-xs text-green-600">오늘의 문장 3개를 학습해보세요!</p>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* Content Section */}
         <motion.div
