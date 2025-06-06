@@ -37,6 +37,9 @@ export default function LearningPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPlayingId, setCurrentPlayingId] = useState<string | null>(null);
   const [playbackController, setPlaybackController] = useState<{ stop: () => void } | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingSentenceId, setRecordingSentenceId] = useState<string | null>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
   // Get progress for the selected day, or current day if no specific day is selected
   const displayDay = selectedDay > 0 ? selectedDay : currentDay;
@@ -67,6 +70,80 @@ export default function LearningPage() {
       oscillator.stop(audioContext.currentTime + 0.3);
     } catch (error) {
       console.log('오디오 컨텍스트 생성 실패:', error);
+    }
+  };
+
+  // Recording functionality
+  const handleSentenceRecording = async (sentence: any) => {
+    if (isRecording && recordingSentenceId === sentence.id.toString()) {
+      // Stop recording
+      if (mediaRecorder) {
+        mediaRecorder.stop();
+        setIsRecording(false);
+        setRecordingSentenceId(null);
+        setMediaRecorder(null);
+        
+        toast({
+          title: "녹음 중단",
+          description: "녹음이 중단되었습니다.",
+        });
+      }
+      return;
+    }
+
+    if (isRecording) {
+      toast({
+        title: "이미 녹음 중",
+        description: "다른 문장을 녹음하고 있습니다.",
+      });
+      return;
+    }
+
+    try {
+      // Request microphone permission
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      
+      const recorder = new MediaRecorder(stream);
+      const audioChunks: BlobPart[] = [];
+
+      recorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        // Play the recorded audio
+        const audio = new Audio(audioUrl);
+        audio.play();
+        
+        toast({
+          title: "녹음 완료",
+          description: `"${sentence.text}" 녹음이 완료되었습니다.`,
+        });
+
+        // Stop all tracks to release microphone
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      setMediaRecorder(recorder);
+      setIsRecording(true);
+      setRecordingSentenceId(sentence.id.toString());
+      
+      recorder.start();
+      
+      toast({
+        title: "녹음 시작",
+        description: `"${sentence.text}" 녹음을 시작합니다.`,
+      });
+
+    } catch (error) {
+      console.error('Recording error:', error);
+      toast({
+        title: "녹음 오류",
+        description: "마이크 접근 권한을 확인해주세요.",
+      });
     }
   };
 
@@ -753,6 +830,21 @@ export default function LearningPage() {
                       <div className="flex-1">
                         <div className="text-xl font-semibold text-gray-800">{sentence.text}</div>
                       </div>
+                      
+                      {/* Recording Button */}
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleSentenceRecording(sentence)}
+                        className={`flex items-center justify-center w-12 h-12 rounded-full transition-colors ${
+                          isRecording && recordingSentenceId === sentence.id.toString()
+                            ? 'bg-red-600 animate-pulse'
+                            : 'bg-red-500 hover:bg-red-600'
+                        } text-white`}
+                        title={isRecording && recordingSentenceId === sentence.id.toString() ? "녹음 중단" : "문장 녹음하기"}
+                      >
+                        {isRecording && recordingSentenceId === sentence.id.toString() ? '⏹️' : '🎤'}
+                      </motion.button>
                     </div>
                   </motion.div>
                 ))}
