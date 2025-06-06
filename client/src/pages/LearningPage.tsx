@@ -836,55 +836,62 @@ export default function LearningPage() {
 
                       </div>
                       
-                      {/* Play Button */}
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleSentenceClick(sentence)}
-                        className="flex items-center justify-center w-12 h-12 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors mr-2"
-                        title="문장 듣기"
-                      >
-                        ▶️
-                      </motion.button>
+                      {/* Audio Buttons */}
+                      <div className="flex items-center gap-2">
+                        {/* TTS Play Button */}
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleSentenceClick(sentence)}
+                          className="flex items-center justify-center w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors"
+                          title="문장 듣기"
+                        >
+                          🔊
+                        </motion.button>
 
-                      {/* Recording Button */}
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSentenceRecording(sentence);
-                        }}
-                        className={`flex items-center justify-center w-12 h-12 rounded-full transition-colors ${
-                          isRecording && recordingSentenceId === sentence.id.toString()
-                            ? 'bg-red-600 animate-pulse'
-                            : 'bg-red-500 hover:bg-red-600'
-                        } text-white mr-2`}
-                        title={isRecording && recordingSentenceId === sentence.id.toString() ? "녹음 중단" : "문장 녹음하기"}
-                      >
-                        {isRecording && recordingSentenceId === sentence.id.toString() ? '⏹️' : '🎤'}
-                      </motion.button>
-
-                      {/* Play Recorded Audio Button */}
-                      {recordedAudios[sentence.id.toString()] && (
+                        {/* Smart Recording/Playback Button */}
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={(e) => {
                             e.stopPropagation();
-                            const audio = new Audio(recordedAudios[sentence.id.toString()]);
-                            audio.play();
-                            toast({
-                              title: "녹음 재생",
-                              description: "내 녹음을 재생합니다.",
-                            });
+                            
+                            // If there's a recorded audio and not currently recording, play it
+                            if (recordedAudios[sentence.id.toString()] && !isRecording) {
+                              const audio = new Audio(recordedAudios[sentence.id.toString()]);
+                              audio.play();
+                              toast({
+                                title: "내 녹음 재생",
+                                description: "녹음된 음성을 재생합니다.",
+                              });
+                            } else {
+                              // Otherwise, handle recording
+                              handleSentenceRecording(sentence);
+                            }
                           }}
-                          className="flex items-center justify-center w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-full transition-colors"
-                          title="내 녹음 듣기"
+                          className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
+                            isRecording && recordingSentenceId === sentence.id.toString()
+                              ? 'bg-red-600 animate-pulse'
+                              : recordedAudios[sentence.id.toString()]
+                              ? 'bg-green-500 hover:bg-green-600'
+                              : 'bg-red-500 hover:bg-red-600'
+                          } text-white`}
+                          title={
+                            isRecording && recordingSentenceId === sentence.id.toString()
+                              ? "녹음 중단"
+                              : recordedAudios[sentence.id.toString()]
+                              ? "내 녹음 듣기"
+                              : "녹음하기"
+                          }
                         >
-                          🔊
+                          {isRecording && recordingSentenceId === sentence.id.toString()
+                            ? '⏹️'
+                            : recordedAudios[sentence.id.toString()]
+                            ? '▶️'
+                            : '🎤'
+                          }
                         </motion.button>
-                      )}
+                      </div>
                     </div>
                   </motion.div>
                 ))}
