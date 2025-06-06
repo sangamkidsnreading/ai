@@ -41,6 +41,7 @@ export default function LearningPage() {
   const [recordingSentenceId, setRecordingSentenceId] = useState<string | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [recordedAudios, setRecordedAudios] = useState<{[key: string]: string}>({});
+  const [sentenceEmojis, setSentenceEmojis] = useState<{[key: string]: string[]}>({});
 
   // Get progress for the selected day, or current day if no specific day is selected
   const displayDay = selectedDay > 0 ? selectedDay : currentDay;
@@ -72,6 +73,84 @@ export default function LearningPage() {
     } catch (error) {
       console.log('오디오 컨텍스트 생성 실패:', error);
     }
+  };
+
+  // Word to emoji mapping
+  const getEmojiForWord = (word: string): string | null => {
+    const emojiMap: {[key: string]: string} = {
+      // Animals
+      'cat': '🐱', 'dog': '🐶', 'bird': '🐦', 'fish': '🐟', 'mouse': '🐭',
+      'cow': '🐄', 'pig': '🐷', 'horse': '🐴', 'sheep': '🐑', 'duck': '🦆',
+      'rabbit': '🐰', 'bear': '🐻', 'lion': '🦁', 'tiger': '🐯', 'elephant': '🐘',
+      
+      // Food
+      'pizza': '🍕', 'burger': '🍔', 'apple': '🍎', 'banana': '🍌', 'cake': '🎂',
+      'bread': '🍞', 'cheese': '🧀', 'egg': '🥚', 'milk': '🥛', 'water': '💧',
+      'ice': '🧊', 'coffee': '☕', 'tea': '🍵', 'cookie': '🍪', 'candy': '🍬',
+      
+      // Transportation
+      'car': '🚗', 'bus': '🚌', 'train': '🚂', 'plane': '✈️', 'bike': '🚲',
+      'ship': '🚢', 'rocket': '🚀', 'boat': '⛵', 'taxi': '🚕', 'truck': '🚚',
+      
+      // Nature
+      'sun': '☀️', 'moon': '🌙', 'star': '⭐', 'cloud': '☁️', 'rain': '🌧️',
+      'snow': '❄️', 'tree': '🌳', 'flower': '🌸', 'grass': '🌱', 'mountain': '⛰️',
+      
+      // Objects
+      'book': '📚', 'phone': '📱', 'computer': '💻', 'watch': '⌚', 'key': '🔑',
+      'ball': '⚽', 'gift': '🎁', 'music': '🎵', 'camera': '📷', 'lamp': '💡',
+      
+      // Body parts
+      'eye': '👁️', 'hand': '✋', 'foot': '🦶', 'heart': '❤️', 'face': '😊',
+      
+      // Actions
+      'love': '💕', 'happy': '😊', 'sad': '😢', 'angry': '😠', 'sleep': '😴',
+      'eat': '🍽️', 'drink': '🥤', 'run': '🏃', 'walk': '🚶', 'dance': '💃',
+      
+      // Numbers
+      'one': '1️⃣', 'two': '2️⃣', 'three': '3️⃣', 'four': '4️⃣', 'five': '5️⃣',
+      
+      // Colors
+      'red': '🔴', 'blue': '🔵', 'green': '🟢', 'yellow': '🟡', 'purple': '🟣',
+      
+      // Common words
+      'big': '🦣', 'small': '🐁', 'fast': '💨', 'slow': '🐌', 'hot': '🔥',
+      'cold': '🧊', 'good': '👍', 'bad': '👎', 'new': '✨', 'old': '🕰️',
+      'house': '🏠', 'school': '🏫', 'friend': '👫', 'family': '👨‍👩‍👧‍👦',
+      'money': '💰', 'time': '⏰', 'day': '🌅', 'night': '🌙', 'morning': '🌄',
+      
+      // Pronouns with fun representations
+      'I': '🙋‍♂️', 'you': '👤', 'we': '👥', 'they': '👫', 'he': '👨', 'she': '👩',
+      
+      // Common verbs
+      'am': '✨', 'are': '✨', 'is': '✨', 'have': '🤲', 'go': '🚶‍♂️',
+      
+      // Default cute emojis for unknown words
+      'and': '➕', 'the': '📝', 'a': '📄', 'an': '📄', 'to': '➡️',
+      'of': '📋', 'in': '📍', 'on': '🔛', 'at': '📌', 'for': '🎯'
+    };
+    
+    return emojiMap[word.toLowerCase()] || null;
+  };
+
+  // Extract emojis from sentence
+  const extractEmojisFromSentence = (text: string): string[] => {
+    const words = text.toLowerCase().replace(/[.,!?]/g, '').split(' ');
+    const emojis: string[] = [];
+    
+    words.forEach(word => {
+      const emoji = getEmojiForWord(word);
+      if (emoji) {
+        emojis.push(emoji);
+      }
+    });
+    
+    // If no emojis found, add some default cute ones
+    if (emojis.length === 0) {
+      emojis.push('✨', '🌟', '💫');
+    }
+    
+    return emojis;
   };
 
   // Recording functionality
@@ -120,10 +199,17 @@ export default function LearningPage() {
           ...prev,
           [sentence.id.toString()]: audioUrl
         }));
+
+        // Extract and save emojis for this sentence
+        const emojis = extractEmojisFromSentence(sentence.text);
+        setSentenceEmojis(prev => ({
+          ...prev,
+          [sentence.id.toString()]: emojis
+        }));
         
         toast({
           title: "녹음 완료",
-          description: `"${sentence.text}" 녹음이 완료되었습니다.`,
+          description: `"${sentence.text}" 녹음이 완료되었습니다. ${emojis.join(' ')}`,
         });
 
         // Stop all tracks to release microphone
@@ -830,6 +916,32 @@ export default function LearningPage() {
                     <div className="flex items-center gap-4">
                       <div className="flex-1">
                         <div className="text-xl font-semibold text-gray-800">{sentence.text}</div>
+                        
+                        {/* Emoji Display */}
+                        {sentenceEmojis[sentence.id.toString()] && (
+                          <div className="mt-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+                            <div className="text-sm text-gray-600 mb-2">녹음된 단어들:</div>
+                            <div className="flex flex-wrap gap-2">
+                              {sentenceEmojis[sentence.id.toString()].map((emoji, index) => (
+                                <motion.div
+                                  key={index}
+                                  initial={{ scale: 0, rotate: 0 }}
+                                  animate={{ scale: 1, rotate: 360 }}
+                                  transition={{ 
+                                    delay: index * 0.2,
+                                    duration: 0.5,
+                                    type: "spring",
+                                    stiffness: 200 
+                                  }}
+                                  className="text-3xl animate-bounce"
+                                  style={{ animationDelay: `${index * 0.1}s` }}
+                                >
+                                  {emoji}
+                                </motion.div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                       
                       {/* Play Button */}
