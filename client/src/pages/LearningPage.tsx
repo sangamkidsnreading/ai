@@ -813,34 +813,56 @@ export default function LearningPage() {
                 <p className="text-sm mt-2">다른 레벨이나 Day를 선택해보세요.</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {getFilteredSentences().map((sentence) => (
                   <motion.div
                     key={sentence.id}
                     whileHover={{ scale: 1.02 }}
-                    className={`relative p-6 rounded-xl transition-all card-hover ${
+                    className={`relative p-4 rounded-xl transition-all card-hover border-2 ${
                       sentence.isLearned
-                        ? 'bg-gradient-to-br from-amber-50 to-amber-100'
-                        : 'bg-gradient-to-br from-orange-50 to-orange-100'
+                        ? 'bg-gradient-to-br from-green-50 to-emerald-100 border-green-200'
+                        : 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200'
                     } ${
-                      currentPlayingId === sentence.id.toString() ? 'ring-4 ring-orange-200' : ''
+                      currentPlayingId === sentence.id.toString() ? 'ring-4 ring-orange-300' : ''
                     }`}
                   >
+                    {/* Learned Check Mark */}
+                    {sentence.isLearned && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute top-3 left-3 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
+                      >
+                        <span className="text-white text-xs">✓</span>
+                      </motion.div>
+                    )}
 
+                    {/* Recording Status Indicator */}
+                    {recordedAudios[sentence.id.toString()] && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="absolute top-3 right-12 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center"
+                      >
+                        <span className="text-white text-xs">🎤</span>
+                      </motion.div>
+                    )}
 
-                    {/* Sentence */}
+                    {/* Sentence Content */}
                     <div 
-                      className="flex items-center gap-4 cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors"
+                      className="cursor-pointer hover:bg-white hover:bg-opacity-30 rounded-lg p-3 transition-colors min-h-[100px] flex items-center"
                       onClick={() => handleSentenceClick(sentence)}
                     >
-                      <div className="flex-1">
-                        <div className="text-xl font-semibold text-gray-800">{sentence.text}</div>
+                      <div className="flex-1 text-center">
+                        <div className="text-lg font-semibold text-gray-800 leading-relaxed">{sentence.text}</div>
                       </div>
-                      
-                      {/* Recording Button */}
+                    </div>
+                    
+                    {/* Recording Button */}
+                    <div className="absolute bottom-3 right-3">
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                         onClick={(e) => {
                           e.stopPropagation();
                           
@@ -857,7 +879,7 @@ export default function LearningPage() {
                             handleSentenceRecording(sentence);
                           }
                         }}
-                        className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
+                        className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors shadow-lg ${
                           isRecording && recordingSentenceId === sentence.id.toString()
                             ? 'bg-red-600 animate-pulse'
                             : recordedAudios[sentence.id.toString()]
