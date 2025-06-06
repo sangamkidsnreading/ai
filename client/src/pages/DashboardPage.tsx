@@ -152,26 +152,35 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl p-6 shadow-lg mb-8"
+        className="bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 shadow-xl border border-blue-100 mb-8"
       >
-        <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
-          <Calendar size={20} />
-          월간 학습 달력
-          <span className="text-sm text-gray-500 ml-auto">
-            <span className="inline-block w-3 h-3 bg-yellow-400 rounded-full mr-1"></span>
-            30코인 이상: 목표 달성!
-          </span>
-        </h3>
+        <div className="text-center mb-8">
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 flex items-center justify-center gap-3">
+            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full">
+              <Calendar size={24} className="text-white" />
+            </div>
+            월간 학습 달력
+          </h3>
+          <p className="text-gray-600 mb-4">매일의 학습 여정을 확인하세요</p>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-100 to-amber-100 px-4 py-2 rounded-full border border-yellow-200">
+            <span className="inline-block w-3 h-3 bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full animate-pulse"></span>
+            <span className="text-sm font-medium text-amber-700">30코인 이상: 목표 달성!</span>
+          </div>
+        </div>
         
-        <div className="grid grid-cols-7 gap-2 mb-4">
-          {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
-            <div key={day} className="p-2 text-center text-sm font-semibold text-gray-500">
+        <div className="grid grid-cols-7 gap-3 mb-6">
+          {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
+            <div key={day} className={`p-3 text-center text-sm font-bold rounded-lg ${
+              index === 0 ? 'text-red-500 bg-red-50' : 
+              index === 6 ? 'text-blue-500 bg-blue-50' : 
+              'text-gray-600 bg-gray-50'
+            }`}>
               {day}
             </div>
           ))}
         </div>
         
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-3">
           {Array.from({ length: 30 }, (_, index) => {
             const day = index + 1;
             const dayData = dayProgress.find(d => d.day === day);
@@ -186,63 +195,108 @@ export default function DashboardPage() {
             return (
               <motion.div
                 key={day}
-                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.02 }}
+                whileHover={{ 
+                  scale: 1.08, 
+                  y: -4,
+                  boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
+                }}
+                whileTap={{ scale: 0.95 }}
                 className={`
-                  p-3 rounded-lg border-2 text-center cursor-pointer transition-all relative
+                  p-4 rounded-xl text-center cursor-pointer transition-all duration-300 relative overflow-hidden shadow-md hover:shadow-lg
                   ${isToday 
-                    ? 'border-blue-500 bg-blue-50' 
+                    ? 'bg-gradient-to-br from-blue-400 to-blue-600 text-white border-2 border-blue-300 ring-2 ring-blue-200' 
                     : hasBonus
-                      ? 'border-amber-500 bg-gradient-to-br from-yellow-100 to-amber-100'
+                      ? 'bg-gradient-to-br from-amber-300 via-yellow-300 to-orange-300 text-amber-900 border-2 border-amber-400 shadow-amber-200'
                       : isGoalAchieved 
-                        ? 'border-yellow-400 bg-yellow-100' 
+                        ? 'bg-gradient-to-br from-yellow-300 to-yellow-400 text-yellow-800 border-2 border-yellow-300 shadow-yellow-200' 
                         : hasActivity 
-                          ? 'border-green-200 bg-green-50' 
-                          : 'border-gray-200 bg-gray-50'
+                          ? 'bg-gradient-to-br from-green-200 to-emerald-300 text-green-800 border-2 border-green-300 shadow-green-100' 
+                          : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-500 border-2 border-gray-200 hover:from-gray-200 hover:to-gray-300'
                   }
                 `}
               >
-                {/* Crown icon for bonus achieved */}
+                {/* Sparkle animation for bonus */}
                 {hasBonus && (
-                  <div className="absolute -top-2 -right-2 text-amber-500 text-lg z-10">
-                    👑
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute top-1 left-1 w-2 h-2 bg-white rounded-full animate-ping opacity-30"></div>
+                    <div className="absolute bottom-1 right-1 w-1 h-1 bg-white rounded-full animate-ping opacity-40 animation-delay-200"></div>
+                    <div className="absolute top-2 right-2 w-1 h-1 bg-white rounded-full animate-ping opacity-50 animation-delay-400"></div>
                   </div>
                 )}
                 
-                <div className={`text-sm font-bold ${
-                  isToday ? 'text-blue-600' : 
-                  hasBonus ? 'text-amber-700' :
-                  isGoalAchieved ? 'text-yellow-700' : 
-                  hasActivity ? 'text-green-600' : 'text-gray-400'
+                {/* Crown icon for bonus achieved */}
+                {hasBonus && (
+                  <motion.div 
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    className="absolute -top-3 -right-3 text-amber-600 text-xl z-10 drop-shadow-lg"
+                  >
+                    👑
+                  </motion.div>
+                )}
+                
+                {/* Star icon for goal achieved */}
+                {isGoalAchieved && !hasBonus && (
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-2 -right-2 text-yellow-600 text-lg z-10 drop-shadow-lg"
+                  >
+                    ⭐
+                  </motion.div>
+                )}
+                
+                <div className={`text-lg font-bold mb-1 ${
+                  isToday ? 'text-white' : 
+                  hasBonus ? 'text-amber-800' :
+                  isGoalAchieved ? 'text-yellow-800' : 
+                  hasActivity ? 'text-green-700' : 'text-gray-500'
                 }`}>
                   {day}
                 </div>
                 
                 {hasActivity && (
-                  <div className="mt-1">
-                    <div className={`text-xs font-semibold ${
-                      hasBonus ? 'text-amber-600' :
-                      isGoalAchieved ? 'text-yellow-600' : 'text-green-600'
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-1"
+                  >
+                    <div className={`text-xs font-bold px-2 py-1 rounded-full ${
+                      hasBonus ? 'bg-amber-700 text-amber-100' :
+                      isGoalAchieved ? 'bg-yellow-700 text-yellow-100' : 
+                      'bg-green-700 text-green-100'
                     }`}>
                       {totalCoins}코인
                     </div>
                     
                     {hasBonus && (
-                      <div className="text-amber-500 text-xs mt-1">
+                      <motion.div 
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="text-amber-800 text-xs font-semibold bg-amber-100 px-2 py-1 rounded-full border border-amber-300"
+                      >
                         +{bonusCoins} 보너스
-                      </div>
+                      </motion.div>
                     )}
-                    
-                    {isGoalAchieved && !hasBonus && (
-                      <div className="text-yellow-500 text-xs mt-1">
-                        ⭐
-                      </div>
-                    )}
-                  </div>
+                  </motion.div>
                 )}
                 
                 {isToday && (
-                  <div className="text-blue-500 text-xs mt-1">
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-blue-100 text-xs font-semibold mt-1 bg-blue-500 px-2 py-1 rounded-full"
+                  >
                     오늘
+                  </motion.div>
+                )}
+                
+                {!hasActivity && !isToday && (
+                  <div className="text-xs text-gray-400 mt-1">
+                    미학습
                   </div>
                 )}
               </motion.div>
@@ -250,28 +304,33 @@ export default function DashboardPage() {
           })}
         </div>
         
-        <div className="mt-6 flex flex-wrap gap-4 text-sm text-gray-600">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 border-2 border-gray-200 bg-gray-50 rounded"></div>
-            학습 안함
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 border-2 border-green-200 bg-green-50 rounded"></div>
-            학습 완료 (30코인 미만)
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 border-2 border-yellow-400 bg-yellow-100 rounded"></div>
-            목표 달성 (30코인 이상)
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 border-2 border-amber-500 bg-gradient-to-br from-yellow-100 to-amber-100 rounded relative">
-              <div className="absolute -top-2 -right-2 text-amber-500 text-sm">👑</div>
+        <div className="mt-8 bg-gradient-to-r from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-200">
+          <h4 className="text-sm font-semibold text-gray-700 mb-4 text-center">달력 범례</h4>
+          <div className="flex flex-wrap justify-center gap-6 text-sm">
+            <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border">
+              <div className="w-4 h-4 bg-gradient-to-br from-gray-100 to-gray-200 border border-gray-300 rounded-lg"></div>
+              <span className="text-gray-600 font-medium">미학습</span>
             </div>
-            보너스 달성 (30코인 + 10보너스)
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 border-2 border-blue-500 bg-blue-50 rounded"></div>
-            오늘
+            <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border">
+              <div className="w-4 h-4 bg-gradient-to-br from-green-200 to-emerald-300 border border-green-300 rounded-lg"></div>
+              <span className="text-gray-600 font-medium">학습 완료</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border">
+              <div className="w-4 h-4 bg-gradient-to-br from-yellow-300 to-yellow-400 border border-yellow-300 rounded-lg relative">
+                <div className="absolute -top-1 -right-1 text-yellow-600 text-xs">⭐</div>
+              </div>
+              <span className="text-gray-600 font-medium">목표 달성</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border">
+              <div className="w-4 h-4 bg-gradient-to-br from-amber-300 via-yellow-300 to-orange-300 border border-amber-400 rounded-lg relative">
+                <div className="absolute -top-2 -right-2 text-amber-600 text-sm">👑</div>
+              </div>
+              <span className="text-gray-600 font-medium">보너스 달성</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-sm border border-blue-200">
+              <div className="w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-600 border border-blue-300 rounded-lg ring-1 ring-blue-200"></div>
+              <span className="text-blue-600 font-medium">오늘</span>
+            </div>
           </div>
         </div>
       </motion.div>
