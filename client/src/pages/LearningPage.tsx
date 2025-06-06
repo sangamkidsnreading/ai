@@ -209,49 +209,31 @@ export default function LearningPage() {
           </div>
         </motion.div>
 
-        {/* Tab Selection */}
+        {/* Combined Section Headers */}
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <motion.button
-            onClick={() => setActiveSection('words')}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`p-4 rounded-xl text-left transition-all ${
-              activeSection === 'words'
-                ? 'bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300'
-                : 'bg-white border-2 border-gray-200 hover:border-purple-200'
-            }`}
-          >
+          <div className="p-4 rounded-xl bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-sm">W</span>
               </div>
               <div>
                 <h3 className="font-bold text-purple-700">Words</h3>
-                <p className="text-xs text-purple-600">새로운 단어 5개와 문장 2개를 학습해보세요!</p>
+                <p className="text-xs text-purple-600">오늘의 단어 10개를 학습해보세요!</p>
               </div>
             </div>
-          </motion.button>
+          </div>
           
-          <motion.button
-            onClick={() => setActiveSection('sentences')}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`p-4 rounded-xl text-left transition-all ${
-              activeSection === 'sentences'
-                ? 'bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300'
-                : 'bg-white border-2 border-gray-200 hover:border-green-200'
-            }`}
-          >
+          <div className="p-4 rounded-xl bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-sm">S</span>
               </div>
               <div>
                 <h3 className="font-bold text-green-700">Sentences</h3>
-                <p className="text-xs text-green-600">구조한 학습이 성공의 열쇠입니다. 화이팅!</p>
+                <p className="text-xs text-green-600">오늘의 문장 3개를 학습해보세요!</p>
               </div>
             </div>
-          </motion.button>
+          </div>
         </div>
 
         {/* Content Section */}
@@ -283,160 +265,159 @@ export default function LearningPage() {
             </motion.button>
           </div>
 
-          {/* Content Grid */}
-          <AnimatePresence mode="wait">
-            {activeSection === 'words' ? (
-              <motion.div
-                key="words"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-              >
-                {getFilteredWords().length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
-                    <p>선택한 조건에 해당하는 단어가 없습니다.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                    {getFilteredWords().map((word) => (
-                      <motion.div
-                        key={word.id}
-                        whileHover={{ scale: 1.05, y: -5 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleWordClick(word)}
-                        className={`relative p-4 rounded-xl cursor-pointer transition-all bg-yellow-50 border-2 ${
-                          currentPlayingId === word.id.toString() 
-                            ? 'border-yellow-400 bg-yellow-100' 
-                            : 'border-yellow-200 hover:border-yellow-300'
-                        } ${word.isLearned ? 'bg-green-50 border-green-200' : ''}`}
-                      >
-                        {/* Favorite Button */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavorite(word.id);
-                          }}
-                          className="absolute top-2 right-2 text-lg"
-                        >
-                          {word.isFavorite ? '❤️' : '🤍'}
-                        </button>
-
-                        {/* Learned Check */}
-                        {word.isLearned && (
-                          <div className="absolute top-2 left-2 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs">✓</span>
-                          </div>
-                        )}
-
-                        {/* Word Content */}
-                        <div className="text-center mt-4">
-                          <div className="text-xl font-bold text-gray-800 mb-1">{word.text}</div>
-                          <div className="text-sm text-gray-600">{word.meaning}</div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
+          {/* Words Section */}
+          <div className="mb-8">
+            <h3 className="text-lg font-bold text-purple-700 mb-4 flex items-center gap-2">
+              <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-xs">W</span>
+              </div>
+              Words
+            </h3>
+            {getFilteredWords().length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <p>선택한 조건에 해당하는 단어가 없습니다.</p>
+              </div>
             ) : (
-              <motion.div
-                key="sentences"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                {getFilteredSentences().length === 0 ? (
-                  <div className="text-center py-12 text-gray-500">
-                    <p>선택한 조건에 해당하는 문장이 없습니다.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {getFilteredSentences().map((sentence) => (
-                      <motion.div
-                        key={sentence.id}
-                        whileHover={{ scale: 1.02 }}
-                        className={`relative p-4 rounded-xl transition-all border-2 ${
-                          sentence.isLearned
-                            ? 'bg-green-50 border-green-200'
-                            : 'bg-orange-50 border-orange-200'
-                        } ${
-                          currentPlayingId === sentence.id.toString() ? 'ring-2 ring-orange-300' : ''
-                        }`}
-                      >
-                        {/* Status Indicators */}
-                        {sentence.isLearned && (
-                          <div className="absolute top-3 left-3 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs">✓</span>
-                          </div>
-                        )}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {getFilteredWords().slice(0, 10).map((word) => (
+                  <motion.div
+                    key={word.id}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleWordClick(word)}
+                    className={`relative p-3 rounded-xl cursor-pointer transition-all bg-yellow-50 border-2 ${
+                      currentPlayingId === word.id.toString() 
+                        ? 'border-yellow-400 bg-yellow-100' 
+                        : 'border-yellow-200 hover:border-yellow-300'
+                    } ${word.isLearned ? 'bg-green-50 border-green-200' : ''}`}
+                  >
+                    {/* Favorite Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(word.id);
+                      }}
+                      className="absolute top-1 right-1 text-sm"
+                    >
+                      {word.isFavorite ? '❤️' : '🤍'}
+                    </button>
 
-                        {recordedAudios[sentence.id.toString()] && (
-                          <div className="absolute top-3 right-12 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs">🎤</span>
-                          </div>
-                        )}
+                    {/* Learned Check */}
+                    {word.isLearned && (
+                      <div className="absolute top-1 left-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
+                    )}
 
-                        {/* Sentence Content */}
-                        <div 
-                          className="cursor-pointer hover:bg-white hover:bg-opacity-50 rounded-lg p-3 transition-colors min-h-[80px] flex items-center"
-                          onClick={() => handleSentenceClick(sentence)}
-                        >
-                          <div className="text-center w-full">
-                            <div className="text-lg font-semibold text-gray-800">{sentence.text}</div>
-                          </div>
-                        </div>
-                        
-                        {/* Recording Button */}
-                        <div className="absolute bottom-3 right-3">
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              
-                              if (recordedAudios[sentence.id.toString()] && !isRecording) {
-                                const audio = new Audio(recordedAudios[sentence.id.toString()]);
-                                audio.play();
-                                toast({
-                                  title: "내 녹음 재생",
-                                  description: "녹음된 음성을 재생합니다.",
-                                });
-                              } else {
-                                handleSentenceRecording(sentence);
-                              }
-                            }}
-                            className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors shadow-md ${
-                              isRecording && recordingSentenceId === sentence.id.toString()
-                                ? 'bg-red-600 animate-pulse'
-                                : recordedAudios[sentence.id.toString()]
-                                ? 'bg-green-500 hover:bg-green-600'
-                                : 'bg-red-500 hover:bg-red-600'
-                            } text-white`}
-                            title={
-                              isRecording && recordingSentenceId === sentence.id.toString()
-                                ? "녹음 중단"
-                                : recordedAudios[sentence.id.toString()]
-                                ? "내 녹음 듣기"
-                                : "녹음하기"
-                            }
-                          >
-                            <span className="text-xs">
-                              {isRecording && recordingSentenceId === sentence.id.toString()
-                                ? '⏹️'
-                                : recordedAudios[sentence.id.toString()]
-                                ? '▶️'
-                                : '🎤'
-                              }
-                            </span>
-                          </motion.button>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
+                    {/* Word Content */}
+                    <div className="text-center mt-3">
+                      <div className="text-lg font-bold text-gray-800 mb-1">{word.text}</div>
+                      <div className="text-xs text-gray-600">{word.meaning}</div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             )}
-          </AnimatePresence>
+          </div>
+
+          {/* Sentences Section */}
+          <div>
+            <h3 className="text-lg font-bold text-green-700 mb-4 flex items-center gap-2">
+              <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-xs">S</span>
+              </div>
+              Sentences
+            </h3>
+            {getFilteredSentences().length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <p>선택한 조건에 해당하는 문장이 없습니다.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {getFilteredSentences().slice(0, 3).map((sentence) => (
+                  <motion.div
+                    key={sentence.id}
+                    whileHover={{ scale: 1.02 }}
+                    className={`relative p-4 rounded-xl transition-all border-2 ${
+                      sentence.isLearned
+                        ? 'bg-green-50 border-green-200'
+                        : 'bg-orange-50 border-orange-200'
+                    } ${
+                      currentPlayingId === sentence.id.toString() ? 'ring-2 ring-orange-300' : ''
+                    }`}
+                  >
+                    {/* Status Indicators */}
+                    {sentence.isLearned && (
+                      <div className="absolute top-3 left-3 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
+                    )}
+
+                    {recordedAudios[sentence.id.toString()] && (
+                      <div className="absolute top-3 right-12 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">🎤</span>
+                      </div>
+                    )}
+
+                    {/* Sentence Content */}
+                    <div 
+                      className="cursor-pointer hover:bg-white hover:bg-opacity-50 rounded-lg p-3 transition-colors min-h-[80px] flex items-center"
+                      onClick={() => handleSentenceClick(sentence)}
+                    >
+                      <div className="text-center w-full">
+                        <div className="text-base font-semibold text-gray-800">{sentence.text}</div>
+                      </div>
+                    </div>
+                    
+                    {/* Recording Button */}
+                    <div className="absolute bottom-3 right-3">
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          
+                          if (recordedAudios[sentence.id.toString()] && !isRecording) {
+                            const audio = new Audio(recordedAudios[sentence.id.toString()]);
+                            audio.play();
+                            toast({
+                              title: "내 녹음 재생",
+                              description: "녹음된 음성을 재생합니다.",
+                            });
+                          } else {
+                            handleSentenceRecording(sentence);
+                          }
+                        }}
+                        className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors shadow-md ${
+                          isRecording && recordingSentenceId === sentence.id.toString()
+                            ? 'bg-red-600 animate-pulse'
+                            : recordedAudios[sentence.id.toString()]
+                            ? 'bg-green-500 hover:bg-green-600'
+                            : 'bg-red-500 hover:bg-red-600'
+                        } text-white`}
+                        title={
+                          isRecording && recordingSentenceId === sentence.id.toString()
+                            ? "녹음 중단"
+                            : recordedAudios[sentence.id.toString()]
+                            ? "내 녹음 듣기"
+                            : "녹음하기"
+                        }
+                      >
+                        <span className="text-xs">
+                          {isRecording && recordingSentenceId === sentence.id.toString()
+                            ? '⏹️'
+                            : recordedAudios[sentence.id.toString()]
+                            ? '▶️'
+                            : '🎤'
+                          }
+                        </span>
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
         </motion.div>
       </div>
     </div>
