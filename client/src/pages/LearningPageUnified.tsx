@@ -159,9 +159,8 @@ export default function LearningPageUnified() {
 
     const wordsToPlay = words.slice(0, 10);
     const sentencesToPlay = sentences.slice(0, 3);
-    const allItems = [...wordsToPlay, ...sentencesToPlay];
     
-    if (allItems.length === 0) {
+    if (wordsToPlay.length === 0 && sentencesToPlay.length === 0) {
       toast({
         title: "알림",
         description: "재생할 학습 콘텐츠가 없습니다.",
@@ -171,12 +170,16 @@ export default function LearningPageUnified() {
 
     setIsPlaying(true);
     
-    let currentIndex = 0;
+    let currentItemIndex = 0;
+    let currentRepeatCount = 0;
+    let currentSection = 'words'; // 'words' or 'sentences'
+    const maxRepeats = 3;
+
     const playNext = () => {
-      if (currentIndex < allItems.length) {
-        const item = allItems[currentIndex];
-        const isWord = currentIndex < wordsToPlay.length;
-        
+      const currentItems = currentSection === 'words' ? wordsToPlay : sentencesToPlay;
+      
+      if (currentItemIndex < currentItems.length) {
+        const item = currentItems[currentItemIndex];
         setCurrentPlayingId(item.id.toString());
         
         const utterance = new SpeechSynthesisUtterance(item.text);
@@ -184,42 +187,71 @@ export default function LearningPageUnified() {
         utterance.lang = 'en-US';
         
         utterance.onend = () => {
-          if (isWord) {
-            addCoinsImmediately(1);
-            learnWord(item.id);
-            toast({
-              title: "학습 완료!",
-              description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
-            });
-          } else {
-            addCoinsImmediately(3);
-            learnSentence(item.id);
-            toast({
-              title: "학습 완료!",
-              description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
-            });
+          currentRepeatCount++;
+          
+          // 3번째 읽기 완료 시 코인 추가 및 학습 처리
+          if (currentRepeatCount === maxRepeats) {
+            if (currentSection === 'words') {
+              addCoinsImmediately(1);
+              learnWord(item.id);
+              toast({
+                title: "단어 학습 완료!",
+                description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
+              });
+            } else {
+              addCoinsImmediately(3);
+              learnSentence(item.id);
+              toast({
+                title: "문장 학습 완료!",
+                description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
+              });
+            }
+            
+            // 다음 아이템으로 이동
+            currentItemIndex++;
+            currentRepeatCount = 0;
           }
           
-          currentIndex++;
           setTimeout(() => {
-            if (currentIndex < allItems.length) {
+            if (currentRepeatCount < maxRepeats) {
+              // 같은 아이템을 다시 읽기
+              playNext();
+            } else if (currentItemIndex < currentItems.length) {
+              // 다음 아이템 읽기
+              playNext();
+            } else if (currentSection === 'words' && sentencesToPlay.length > 0) {
+              // 단어 섹션 완료, 문장 섹션으로 이동
+              currentSection = 'sentences';
+              currentItemIndex = 0;
+              currentRepeatCount = 0;
+              toast({
+                title: "단어 학습 완료!",
+                description: "이제 문장을 학습합니다.",
+              });
               playNext();
             } else {
+              // 모든 학습 완료
               setIsPlaying(false);
               setCurrentPlayingId(null);
               toast({
-                title: "학습 완료!",
-                description: "모든 학습 콘텐츠를 완료했습니다.",
+                title: "모든 학습 완료!",
+                description: "오늘의 학습을 모두 완료했습니다.",
               });
             }
-          }, 500);
+          }, 300);
         };
         
         speechSynthesis.speak(utterance);
       }
     };
 
-    playNext();
+    // 학습 시작 안내
+    toast({
+      title: "학습 시작!",
+      description: "단어부터 시작합니다. 각 단어를 3번씩 읽어드립니다.",
+    });
+    
+    setTimeout(playNext, 500);
   };
 
   return (
