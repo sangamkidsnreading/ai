@@ -285,10 +285,7 @@ export default function LearningPageUnified() {
           animate={{ opacity: 1, y: 0 }}
         >
           {/* Start Button */}
-          <div className="flex justify-between items-center mb-6">
-            <div className="text-sm text-gray-600">
-              Level {selectedLevel || 1} - Day {selectedDay || currentDay}
-            </div>
+          <div className="flex justify-end items-center mb-6">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
