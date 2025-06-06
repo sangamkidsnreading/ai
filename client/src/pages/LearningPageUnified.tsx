@@ -42,6 +42,40 @@ export default function LearningPageUnified() {
   const currentDayProgress = dayProgress.find(d => d.day === (selectedDay || currentDay)) || 
     { day: selectedDay || currentDay, wordsLearned: 0, sentencesLearned: 0, coinsEarned: 0 };
 
+  // 일차별 동기부여 메시지
+  const getMotivationalMessage = (day: number) => {
+    const messages = [
+      "오늘 첫날 시작이 반!! 화이팅 김학습자 💪",
+      "오호 오늘도 들어왔네요. 30코인 이상이면 10코인이 더 적립되요 ✨",
+      "벌써 3일째! 연속 학습 습관이 만들어지고 있어요 🔥",
+      "4일째 접속! 꾸준함이 실력을 만듭니다 📈",
+      "5일 연속 학습! 이제 진짜 학습자다운 모습이네요 🎯",
+      "일주일의 시작! 이번 주도 열심히 해봐요 🌟",
+      "일주일 완주 임박! 마지막 스퍼트 해봅시다 🚀",
+      "와! 일주일 완주했어요. 정말 대단해요 🏆",
+      "9일째 학습! 벌써 습관이 되었을 거예요 💎",
+      "10일 돌파! 이제 진짜 영어 고수 되는 중 🎓",
+      "11일째! 포기하지 않는 당신이 멋져요 👏",
+      "12일 연속! 꾸준함의 힘을 보여주고 있어요 ⭐",
+      "13일째! 불행의 숫자라도 학습은 계속 🍀",
+      "2주 완주! 정말 놀라운 의지력이에요 🎊",
+      "15일 돌파! 이제 학습이 생활의 일부가 됐네요 🌈"
+    ];
+    
+    if (day <= messages.length) {
+      return messages[day - 1];
+    } else {
+      const randomMessages = [
+        `${day}일째 학습! 정말 대단한 끈기네요 🏅`,
+        `벌써 ${day}일! 당신의 꾸준함에 박수를 👏`,
+        `${day}일 연속! 영어 실력이 쑥쑥 늘고 있어요 📚`,
+        `${day}일째 도전! 포기하지 않는 모습이 멋져요 💪`,
+        `${day}일 달성! 이제 진짜 영어 마스터 되는 중 🌟`
+      ];
+      return randomMessages[day % randomMessages.length];
+    }
+  };
+
   // Audio functions
   const handleWordClick = async (word: any) => {
     if (currentPlayingId === word.id.toString()) return;
@@ -329,8 +363,8 @@ export default function LearningPageUnified() {
               <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
                 LEVEL {selectedLevel || 1} - Day {selectedDay || currentDay}
               </h1>
-              <p className="text-gray-600">
-                오늘 학습: 단어 8개, 문장 3개
+              <p className="text-gray-600 font-medium">
+                {getMotivationalMessage(selectedDay || currentDay)}
               </p>
             </div>
             <div className="text-right">
