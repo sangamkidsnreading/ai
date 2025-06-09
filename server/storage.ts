@@ -101,16 +101,16 @@ export class DatabaseStorage implements IStorage {
         // Create sample words for 10 levels
         const sampleWords = [
           // Level 1 - Basic words
-          { text: "I", level: 1, day: 1 },
-          { text: "am", level: 1, day: 1 },
-          { text: "big", level: 1, day: 1 },
-          { text: "and", level: 1, day: 1 },
-          { text: "fast", level: 1, day: 1 },
-          { text: "we", level: 1, day: 1 },
-          { text: "are", level: 1, day: 1 },
-          { text: "tall", level: 1, day: 1 },
-          { text: "small", level: 1, day: 1 },
-          { text: "good", level: 1, day: 1 },
+          { text: "I", meaning: "나", level: 1, day: 1 },
+          { text: "am", meaning: "~이다", level: 1, day: 1 },
+          { text: "big", meaning: "큰", level: 1, day: 1 },
+          { text: "and", meaning: "그리고", level: 1, day: 1 },
+          { text: "fast", meaning: "빠른", level: 1, day: 1 },
+          { text: "we", meaning: "우리", level: 1, day: 1 },
+          { text: "are", meaning: "~이다(복수)", level: 1, day: 1 },
+          { text: "small", meaning: "작은", level: 1, day: 1 },
+          { text: "tall", meaning: "키 큰", level: 1, day: 1 },
+          { text: "slow", meaning: "느린", level: 1, day: 1 },
           
           // Level 2
           { text: "you", level: 2, day: 1 },
