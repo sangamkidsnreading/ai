@@ -31,6 +31,7 @@ export default function LearningPageUnified() {
   const [recordingSentenceId, setRecordingSentenceId] = useState<string | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [recordedAudios, setRecordedAudios] = useState<{[key: string]: string}>({});
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -397,21 +398,35 @@ export default function LearningPageUnified() {
                 </div>
                 Words
               </h3>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleStartWords}
-                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                  isPlaying
-                    ? 'bg-red-500 text-white hover:bg-red-600'
-                    : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
-                }`}
-              >
-                {isPlaying ? '⏹️ Stop' : '🎯 Start'}
-              </motion.button>
+              <div className="flex items-center gap-2">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                  className={`px-3 py-2 rounded-lg font-semibold text-xs transition-all ${
+                    showFavoritesOnly
+                      ? 'bg-red-500 text-white hover:bg-red-600'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {showFavoritesOnly ? '❤️ 즐겨찾기' : '🤍 전체'}
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleStartWords}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                    isPlaying
+                      ? 'bg-red-500 text-white hover:bg-red-600'
+                      : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
+                  }`}
+                >
+                  {isPlaying ? '⏹️ Stop' : '🎯 Start'}
+                </motion.button>
+              </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              {words.slice(0, 10).map((word) => (
+              {words.slice(0, 10).filter(word => showFavoritesOnly ? word.isFavorite : true).map((word) => (
                 <motion.div
                   key={word.id}
                   whileHover={{ scale: 1.05, y: -5 }}
