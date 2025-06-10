@@ -32,6 +32,7 @@ export default function LearningPageUnified() {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [recordedAudios, setRecordedAudios] = useState<{[key: string]: string}>({});
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -534,6 +535,16 @@ export default function LearningPageUnified() {
                         
                         if (recordedAudios[sentence.id.toString()] && !isRecording) {
                           const audio = new Audio(recordedAudios[sentence.id.toString()]);
+                          setPlayingAudioId(sentence.id.toString());
+                          
+                          audio.onended = () => {
+                            setPlayingAudioId(null);
+                            toast({
+                              title: "재생 완료",
+                              description: "녹음 재생이 완료되었습니다.",
+                            });
+                          };
+                          
                           audio.play();
                           toast({
                             title: "내 녹음 재생",
@@ -546,6 +557,8 @@ export default function LearningPageUnified() {
                       className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors shadow-md ${
                         isRecording && recordingSentenceId === sentence.id.toString()
                           ? 'bg-red-600 animate-pulse'
+                          : playingAudioId === sentence.id.toString()
+                          ? 'bg-blue-500 animate-pulse'
                           : recordedAudios[sentence.id.toString()]
                           ? 'bg-green-500 hover:bg-green-600'
                           : 'bg-red-500 hover:bg-red-600'
@@ -553,6 +566,8 @@ export default function LearningPageUnified() {
                       title={
                         isRecording && recordingSentenceId === sentence.id.toString()
                           ? "녹음 중단"
+                          : playingAudioId === sentence.id.toString()
+                          ? "재생 중..."
                           : recordedAudios[sentence.id.toString()]
                           ? "내 녹음 듣기"
                           : "녹음하기"
@@ -561,6 +576,8 @@ export default function LearningPageUnified() {
                       <span className="text-xs">
                         {isRecording && recordingSentenceId === sentence.id.toString()
                           ? '⏹️'
+                          : playingAudioId === sentence.id.toString()
+                          ? '🔊'
                           : recordedAudios[sentence.id.toString()]
                           ? '▶️'
                           : '🎤'
