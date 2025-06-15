@@ -118,60 +118,6 @@ export default function LearningPageUnified() {
     speechSynthesis.speak(utterance);
   };
 
-  // 발음 평가 함수
-  const assessPronunciation = async (audioBlob: Blob, targetText: string, isWord: boolean, itemId: number) => {
-    if (!currentUser) return;
-    
-    setIsAssessing(true);
-    try {
-      // Convert blob to base64
-      const reader = new FileReader();
-      const audioDataPromise = new Promise<string>((resolve) => {
-        reader.onloadend = () => {
-          const base64 = reader.result as string;
-          resolve(base64.split(',')[1]); // Remove data:audio/wav;base64, prefix
-        };
-      });
-      reader.readAsDataURL(audioBlob);
-      const audioData = await audioDataPromise;
-
-      const response = await fetch('/api/pronunciation/assess', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: currentUser.id,
-          wordId: isWord ? itemId : null,
-          sentenceId: isWord ? null : itemId,
-          audioData,
-          targetText,
-        }),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        setPronunciationResults(prev => ({
-          ...prev,
-          [itemId.toString()]: result
-        }));
-        
-        toast({
-          title: "발음 평가 완료",
-          description: `점수: ${result.score}점 - ${result.feedback}`,
-        });
-      }
-    } catch (error) {
-      console.error('Pronunciation assessment error:', error);
-      toast({
-        title: "평가 오류",
-        description: "발음 평가 중 오류가 발생했습니다.",
-      });
-    } finally {
-      setIsAssessing(false);
-    }
-  };
-
   const handleWordRecording = async (word: any) => {
     if (isRecording && recordingWordId === word.id.toString()) {
       if (mediaRecorder) {
@@ -211,11 +157,8 @@ export default function LearningPageUnified() {
 
         toast({
           title: "녹음 완료",
-          description: `"${word.text}" 녹음이 완료되었습니다. 발음을 평가 중...`,
+          description: `"${word.text}" 녹음이 완료되었습니다.`,
         });
-
-        // 발음 평가 자동 실행
-        await assessPronunciation(audioBlob, word.text, true, word.id);
 
         stream.getTracks().forEach(track => track.stop());
       };
@@ -278,11 +221,8 @@ export default function LearningPageUnified() {
 
         toast({
           title: "녹음 완료",
-          description: `"${sentence.text}" 녹음이 완료되었습니다. 발음을 평가 중...`,
+          description: `"${sentence.text}" 녹음이 완료되었습니다.`,
         });
-
-        // 발음 평가 자동 실행
-        await assessPronunciation(audioBlob, sentence.text, false, sentence.id);
 
         stream.getTracks().forEach(track => track.stop());
       };
@@ -329,66 +269,34 @@ export default function LearningPageUnified() {
     }
 
     setIsPlaying(true);
-    
-    let currentItemIndex = 0;
-    let currentRepeatCount = 0;
-    const maxRepeats = 3;
+    let currentIndex = 0;
 
-    const playNext = () => {
-      if (currentItemIndex < wordsToPlay.length) {
-        const item = wordsToPlay[currentItemIndex];
-        setCurrentPlayingId(item.id.toString());
-        
-        const utterance = new SpeechSynthesisUtterance(item.text);
-        utterance.rate = 0.8;
-        utterance.lang = 'en-US';
-        
-        utterance.onend = () => {
-          currentRepeatCount++;
-          
-          // 3번째 읽기 완료 시 코인 추가 및 학습 처리
-          if (currentRepeatCount === maxRepeats) {
-            addCoinsImmediately(1);
-            learnWord(item.id);
-            toast({
-              title: "단어 학습 완료!",
-              description: `"${item.text}" 단어를 학습했습니다. +1 코인`,
-            });
-            
-            // 다음 아이템으로 이동
-            currentItemIndex++;
-            currentRepeatCount = 0;
-          }
-          
-          setTimeout(() => {
-            if (currentRepeatCount < maxRepeats) {
-              // 같은 아이템을 다시 읽기
-              playNext();
-            } else if (currentItemIndex < wordsToPlay.length) {
-              // 다음 아이템 읽기
-              playNext();
-            } else {
-              // 모든 단어 학습 완료
-              setIsPlaying(false);
-              setCurrentPlayingId(null);
-              toast({
-                title: "단어 학습 완료!",
-                description: "모든 단어를 완료했습니다.",
-              });
-            }
-          }, 300);
-        };
-        
-        speechSynthesis.speak(utterance);
+    const playNextWord = () => {
+      if (currentIndex >= wordsToPlay.length) {
+        setIsPlaying(false);
+        setCurrentPlayingId(null);
+        toast({
+          title: "재생 완료",
+          description: "모든 단어 재생이 완료되었습니다.",
+        });
+        return;
       }
+
+      const currentWord = wordsToPlay[currentIndex];
+      setCurrentPlayingId(currentWord.id.toString());
+      
+      const utterance = new SpeechSynthesisUtterance(currentWord.text);
+      utterance.rate = 0.8;
+      utterance.lang = 'en-US';
+      utterance.onend = () => {
+        currentIndex++;
+        setTimeout(playNextWord, 1000); // 1초 간격
+      };
+      
+      speechSynthesis.speak(utterance);
     };
 
-    toast({
-      title: "단어 학습 시작!",
-      description: "각 단어를 3번씩 읽어드립니다.",
-    });
-    
-    setTimeout(playNext, 500);
+    playNextWord();
   };
 
   const handleStartSentences = () => {
@@ -414,128 +322,94 @@ export default function LearningPageUnified() {
     }
 
     setIsPlaying(true);
-    
-    let currentItemIndex = 0;
-    let currentRepeatCount = 0;
-    const maxRepeats = 3;
+    let currentIndex = 0;
 
-    const playNext = () => {
-      if (currentItemIndex < sentencesToPlay.length) {
-        const item = sentencesToPlay[currentItemIndex];
-        setCurrentPlayingId(item.id.toString());
-        
-        const utterance = new SpeechSynthesisUtterance(item.text);
-        utterance.rate = 0.8;
-        utterance.lang = 'en-US';
-        
-        utterance.onend = () => {
-          currentRepeatCount++;
-          
-          // 3번째 읽기 완료 시 코인 추가 및 학습 처리
-          if (currentRepeatCount === maxRepeats) {
-            addCoinsImmediately(3);
-            learnSentence(item.id);
-            toast({
-              title: "문장 학습 완료!",
-              description: `"${item.text}" 문장을 학습했습니다. +3 코인`,
-            });
-            
-            // 다음 아이템으로 이동
-            currentItemIndex++;
-            currentRepeatCount = 0;
-          }
-          
-          setTimeout(() => {
-            if (currentRepeatCount < maxRepeats) {
-              // 같은 아이템을 다시 읽기
-              playNext();
-            } else if (currentItemIndex < sentencesToPlay.length) {
-              // 다음 아이템 읽기
-              playNext();
-            } else {
-              // 모든 문장 학습 완료
-              setIsPlaying(false);
-              setCurrentPlayingId(null);
-              toast({
-                title: "문장 학습 완료!",
-                description: "모든 문장을 완료했습니다.",
-              });
-            }
-          }, 300);
-        };
-        
-        speechSynthesis.speak(utterance);
+    const playNextSentence = () => {
+      if (currentIndex >= sentencesToPlay.length) {
+        setIsPlaying(false);
+        setCurrentPlayingId(null);
+        toast({
+          title: "재생 완료",
+          description: "모든 문장 재생이 완료되었습니다.",
+        });
+        return;
       }
+
+      const currentSentence = sentencesToPlay[currentIndex];
+      setCurrentPlayingId(currentSentence.id.toString());
+      
+      const utterance = new SpeechSynthesisUtterance(currentSentence.text);
+      utterance.rate = 0.8;
+      utterance.lang = 'en-US';
+      utterance.onend = () => {
+        currentIndex++;
+        setTimeout(playNextSentence, 1500); // 1.5초 간격
+      };
+      
+      speechSynthesis.speak(utterance);
     };
 
-    toast({
-      title: "문장 학습 시작!",
-      description: "각 문장을 3번씩 읽어드립니다.",
-    });
-    
-    setTimeout(playNext, 500);
+    playNextSentence();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 p-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div className="container mx-auto px-4 py-6">
         <motion.div
-          className="bg-white rounded-xl p-6 shadow-sm mb-6"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
-                LEVEL {selectedLevel || 1} - Day {selectedDay || currentDay}
-              </h1>
-              <p className="text-gray-600 font-medium">
-                {getMotivationalMessage(selectedDay || currentDay)}
-              </p>
-            </div>
-            <div className="text-right">
-              <div className="text-xs text-gray-500 mb-1">오늘 적립 코인</div>
-              <div className="text-3xl font-bold text-yellow-600 flex items-center gap-2">
-                {totalCoins}
-                <span className="text-yellow-500 text-2xl">⚡</span>
-              </div>
-              <div className="text-xs text-green-600">+15%</div>
-            </div>
-          </div>
-        </motion.div>
-
-
-
-        {/* Content Section */}
-        <motion.div
-          className="bg-white rounded-xl p-6 shadow-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          className="max-w-6xl mx-auto"
         >
-
+          {/* 상단 정보 패널 */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">{totalCoins}</div>
+                <div className="text-sm text-gray-600">총 코인</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">{currentDayProgress.wordsLearned}</div>
+                <div className="text-sm text-gray-600">오늘 학습 단어</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{currentDayProgress.sentencesLearned}</div>
+                <div className="text-sm text-gray-600">오늘 학습 문장</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">{userStats.streak}</div>
+                <div className="text-sm text-gray-600">연속 학습일</div>
+              </div>
+            </div>
+            
+            {/* 동기부여 메시지 */}
+            <div className="mt-6 p-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl">
+              <div className="text-center text-gray-800 font-medium">
+                {getMotivationalMessage(selectedDay || currentDay)}
+              </div>
+            </div>
+          </div>
 
           {/* Words Section */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-purple-700 flex items-center gap-2">
-                <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+              <h3 className="text-lg font-bold text-blue-700 flex items-center gap-2">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                   <span className="text-white font-bold text-xs">W</span>
                 </div>
                 Words
               </h3>
-              <div className="flex items-center gap-2">
+              <div className="flex gap-2">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                  className={`px-3 py-2 rounded-lg font-semibold text-xs transition-all ${
+                  className={`px-3 py-1 rounded-lg text-sm font-semibold transition-all ${
                     showFavoritesOnly
-                      ? 'bg-red-500 text-white hover:bg-red-600'
+                      ? 'bg-red-500 text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
-                  {showFavoritesOnly ? '❤️ 즐겨찾기' : '🤍 전체'}
+                  ❤️ {showFavoritesOnly ? 'All' : 'Favorites'}
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -586,18 +460,6 @@ export default function LearningPageUnified() {
                   {recordedAudios[`word_${word.id.toString()}`] && (
                     <div className="absolute top-8 left-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
                       <span className="text-white text-xs">🎤</span>
-                    </div>
-                  )}
-
-                  {/* Pronunciation Score for Words */}
-                  {pronunciationResults[word.id.toString()] && (
-                    <div className="absolute top-12 right-1 bg-white border border-gray-200 rounded-lg p-1 shadow-sm text-xs max-w-[80px]">
-                      <div className="font-semibold text-center">
-                        {pronunciationResults[word.id.toString()].score}점
-                      </div>
-                      <div className="text-gray-600 text-center text-xs">
-                        {pronunciationResults[word.id.toString()].feedback.substring(0, 15)}...
-                      </div>
                     </div>
                   )}
 
@@ -702,24 +564,6 @@ export default function LearningPageUnified() {
                     </div>
                   )}
 
-                  {/* Pronunciation Score */}
-                  {pronunciationResults[sentence.id.toString()] && (
-                    <div className="absolute top-10 right-3 bg-white border border-gray-200 rounded-lg p-2 shadow-sm min-w-[120px]">
-                      <div className="text-xs font-semibold text-center mb-1">
-                        점수: {pronunciationResults[sentence.id.toString()].score}점
-                      </div>
-                      <div className="grid grid-cols-2 gap-1 text-xs">
-                        <div>정확도: {pronunciationResults[sentence.id.toString()].accuracy}</div>
-                        <div>유창성: {pronunciationResults[sentence.id.toString()].fluency}</div>
-                        <div>완성도: {pronunciationResults[sentence.id.toString()].completeness}</div>
-                        <div>억양: {pronunciationResults[sentence.id.toString()].prosody}</div>
-                      </div>
-                      <div className="text-xs text-gray-600 mt-1 text-center">
-                        {pronunciationResults[sentence.id.toString()].feedback}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Sentence Content */}
                   <div 
                     className="cursor-pointer hover:bg-white hover:bg-opacity-50 rounded-lg p-3 transition-colors min-h-[80px] flex items-center"
@@ -729,13 +573,6 @@ export default function LearningPageUnified() {
                       <div className="text-base font-semibold text-gray-800">{sentence.text}</div>
                     </div>
                   </div>
-                  
-                  {/* Assessment Loading Indicator */}
-                  {isAssessing && (
-                    <div className="absolute bottom-12 right-3 bg-blue-100 border border-blue-300 rounded-lg p-2 text-xs text-blue-700">
-                      평가 중...
-                    </div>
-                  )}
 
                   {/* Recording Button */}
                   <div className="absolute bottom-3 right-3">
