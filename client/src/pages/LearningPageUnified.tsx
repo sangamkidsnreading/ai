@@ -30,6 +30,7 @@ export default function LearningPageUnified() {
   const [currentPlayingId, setCurrentPlayingId] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSentenceId, setRecordingSentenceId] = useState<string | null>(null);
+  const [recordingWordId, setRecordingWordId] = useState<string | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [recordedAudios, setRecordedAudios] = useState<{[key: string]: string}>({});
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
@@ -174,6 +175,73 @@ export default function LearningPageUnified() {
     }
   };
 
+  const handleWordRecording = async (word: any) => {
+    if (isRecording && recordingWordId === word.id.toString()) {
+      if (mediaRecorder) {
+        mediaRecorder.stop();
+        setIsRecording(false);
+        setRecordingWordId(null);
+        setMediaRecorder(null);
+      }
+      return;
+    }
+
+    if (isRecording) {
+      toast({
+        title: "이미 녹음 중",
+        description: "다른 항목을 녹음하고 있습니다.",
+      });
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const audioChunks: BlobPart[] = [];
+
+      recorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+
+      recorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        setRecordedAudios(prev => ({
+          ...prev,
+          [`word_${word.id.toString()}`]: audioUrl
+        }));
+
+        toast({
+          title: "녹음 완료",
+          description: `"${word.text}" 녹음이 완료되었습니다. 발음을 평가 중...`,
+        });
+
+        // 발음 평가 자동 실행
+        await assessPronunciation(audioBlob, word.text, true, word.id);
+
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      setMediaRecorder(recorder);
+      setIsRecording(true);
+      setRecordingWordId(word.id.toString());
+      recorder.start();
+      
+      toast({
+        title: "녹음 시작",
+        description: `"${word.text}" 녹음을 시작합니다.`,
+      });
+
+    } catch (error) {
+      console.error('Recording error:', error);
+      toast({
+        title: "녹음 오류",
+        description: "마이크 접근 권한을 확인해주세요.",
+      });
+    }
+  };
+
   const handleSentenceRecording = async (sentence: any) => {
     if (isRecording && recordingSentenceId === sentence.id.toString()) {
       if (mediaRecorder) {
@@ -188,7 +256,7 @@ export default function LearningPageUnified() {
     if (isRecording) {
       toast({
         title: "이미 녹음 중",
-        description: "다른 문장을 녹음하고 있습니다.",
+        description: "다른 항목을 녹음하고 있습니다.",
       });
       return;
     }
@@ -517,10 +585,72 @@ export default function LearningPageUnified() {
                     </div>
                   )}
 
+                  {/* Recording Indicator */}
+                  {recordedAudios[`word_${word.id.toString()}`] && (
+                    <div className="absolute top-8 left-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-xs">🎤</span>
+                    </div>
+                  )}
+
+                  {/* Pronunciation Score for Words */}
+                  {pronunciationResults[word.id.toString()] && (
+                    <div className="absolute top-12 right-1 bg-white border border-gray-200 rounded-lg p-1 shadow-sm text-xs max-w-[80px]">
+                      <div className="font-semibold text-center">
+                        {pronunciationResults[word.id.toString()].score}점
+                      </div>
+                      <div className="text-gray-600 text-center text-xs">
+                        {pronunciationResults[word.id.toString()].feedback.substring(0, 15)}...
+                      </div>
+                    </div>
+                  )}
+
                   {/* Word Content */}
                   <div className="text-center mt-3">
                     <div className="text-lg font-bold text-gray-800 mb-1">{word.text}</div>
                     <div className="text-xs text-gray-600">{word.meaning}</div>
+                  </div>
+
+                  {/* Word Recording Button */}
+                  <div className="absolute bottom-1 right-1">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        
+                        if (recordedAudios[`word_${word.id.toString()}`] && !isRecording) {
+                          const audio = new Audio(recordedAudios[`word_${word.id.toString()}`]);
+                          audio.play();
+                          toast({
+                            title: "내 녹음 재생",
+                            description: "녹음된 음성을 재생합니다.",
+                          });
+                        } else {
+                          handleWordRecording(word);
+                        }
+                      }}
+                      className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors shadow-md text-xs ${
+                        isRecording && recordingWordId === word.id.toString()
+                          ? 'bg-red-600 animate-pulse'
+                          : recordedAudios[`word_${word.id.toString()}`]
+                          ? 'bg-green-500 hover:bg-green-600'
+                          : 'bg-red-500 hover:bg-red-600'
+                      } text-white`}
+                      title={
+                        isRecording && recordingWordId === word.id.toString()
+                          ? "녹음 중단"
+                          : recordedAudios[`word_${word.id.toString()}`]
+                          ? "내 녹음 듣기"
+                          : "녹음하기"
+                      }
+                    >
+                      {isRecording && recordingWordId === word.id.toString()
+                        ? "⏹️"
+                        : recordedAudios[`word_${word.id.toString()}`]
+                        ? "▶️"
+                        : "🎤"
+                      }
+                    </motion.button>
                   </div>
                 </motion.div>
               ))}
