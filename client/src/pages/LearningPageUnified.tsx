@@ -353,280 +353,325 @@ export default function LearningPageUnified() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 p-6">
-      {/* 헤더 */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl p-6 text-white mb-6"
-      >
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">DAY {selectedDay || currentDay}</h1>
-            <p className="opacity-90">오늘 학습: 단어 {currentDayProgress.wordsLearned}개, 문장 {currentDayProgress.sentencesLearned}개</p>
-          </div>
-          <div className="flex items-center gap-2 bg-white bg-opacity-20 rounded-lg px-4 py-2">
-            <span className="text-yellow-300 text-xl">⚡</span>
-            <span className="font-bold">{totalCoins} 코인</span>
-          </div>
-        </div>
-        
-        {/* 동기부여 메시지 */}
-        <div className="mt-4 p-3 bg-white bg-opacity-10 rounded-xl">
-          <div className="text-center text-white font-medium opacity-90">
-            {getMotivationalMessage(selectedDay || currentDay)}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Words Section */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold text-blue-700 flex items-center gap-2">
-            <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xs">W</span>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-cyan-50 p-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Top Stats Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl p-6 mb-6 shadow-lg border border-gray-100"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800 mb-1">
+                Level {selectedLevel || 1} - Day {selectedDay || currentDay}
+              </h1>
+              <p className="text-gray-600">
+                오늘 학습: 단어 {currentDayProgress.wordsLearned}개, 문장 {currentDayProgress.sentencesLearned}개
+              </p>
             </div>
-            Words
-          </h3>
-          <div className="flex gap-2">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-              className={`px-3 py-1 rounded-lg text-sm font-semibold transition-all ${
-                showFavoritesOnly
-                  ? 'bg-red-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              ❤️ {showFavoritesOnly ? 'All' : 'Favorites'}
-            </motion.button>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <div className="text-sm text-gray-600">오늘 획득한 코인</div>
+                <div className="text-2xl font-bold text-yellow-600">
+                  🪙 {totalCoins}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 동기부여 메시지 */}
+          <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
+            <div className="text-center text-gray-700 font-medium">
+              {getMotivationalMessage(selectedDay || currentDay)}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Combined Section Headers */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="p-4 rounded-xl bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">W</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-purple-700">Words</h3>
+                <p className="text-xs text-purple-600">오늘의 단어 10개를 학습해보세요!</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="p-4 rounded-xl bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">S</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-green-700">Sentences</h3>
+                <p className="text-xs text-green-600">오늘의 문장 3개를 학습해보세요!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <motion.div
+          className="bg-white rounded-xl p-6 shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          {/* Start Button */}
+          <div className="flex justify-between items-center mb-6">
+            <div className="text-sm text-gray-600">
+              Level {selectedLevel || 1} - Day {selectedDay || currentDay}
+            </div>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleStartWords}
-              className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+              className={`px-6 py-3 rounded-xl font-semibold transition-all ${
                 isPlaying
                   ? 'bg-red-500 text-white hover:bg-red-600'
                   : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
               }`}
             >
-              {isPlaying ? '⏹️ Stop' : '🎯 Start'}
+              {isPlaying ? (
+                <>⏹️ Stop</>
+              ) : (
+                <>🎯 Start</>
+              )}
             </motion.button>
           </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {words.slice(0, 10).filter(word => showFavoritesOnly ? word.isFavorite : true).map((word) => (
-            <motion.div
-              key={word.id}
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleWordClick(word)}
-              className={`relative p-3 rounded-xl cursor-pointer transition-all bg-yellow-50 border-2 ${
-                currentPlayingId === word.id.toString() 
-                  ? 'border-yellow-400 bg-yellow-100' 
-                  : 'border-yellow-200 hover:border-yellow-300'
-              } ${word.isLearned ? 'bg-green-50 border-green-200' : ''}`}
-            >
-              {/* Favorite Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleFavorite(word.id);
-                }}
-                className="absolute top-1 right-1 text-sm"
+
+          {/* Words Section */}
+          <div className="mb-8">
+            <h3 className="text-lg font-bold text-purple-700 mb-4 flex items-center gap-2">
+              <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-xs">W</span>
+              </div>
+              Words
+            </h3>
+            {getFilteredWords().length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <p>선택한 조건에 해당하는 단어가 없습니다.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {getFilteredWords().slice(0, 10).map((word) => (
+                  <motion.div
+                    key={word.id}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleWordClick(word)}
+                    className={`relative p-3 rounded-xl cursor-pointer transition-all bg-yellow-50 border-2 ${
+                      currentPlayingId === word.id.toString() 
+                        ? 'border-yellow-400 bg-yellow-100' 
+                        : 'border-yellow-200 hover:border-yellow-300'
+                    } ${word.isLearned ? 'bg-green-50 border-green-200' : ''}`}
+                  >
+                    {/* Favorite Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(word.id);
+                      }}
+                      className="absolute top-1 right-1 text-sm"
+                    >
+                      {word.isFavorite ? <Heart className="w-4 h-4 fill-red-500 text-red-500" /> : <Heart className="w-4 h-4 text-gray-400" />}
+                    </button>
+
+                    {/* Learned Check */}
+                    {word.isLearned && (
+                      <div className="absolute top-1 left-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
+                    )}
+
+                    {/* Recording Indicator */}
+                    {recordedAudios[`word_${word.id.toString()}`] && (
+                      <div className="absolute top-8 left-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">🎤</span>
+                      </div>
+                    )}
+
+                    {/* Word Content */}
+                    <div className="text-center mt-3">
+                      <div className="text-lg font-bold text-gray-800 mb-1">{word.text}</div>
+                      <div className="text-xs text-gray-600">{word.meaning}</div>
+                    </div>
+
+                    {/* Word Recording Button */}
+                    <div className="absolute bottom-1 right-1">
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          
+                          if (recordedAudios[`word_${word.id.toString()}`] && !isRecording) {
+                            const audio = new Audio(recordedAudios[`word_${word.id.toString()}`]);
+                            audio.play();
+                            toast({
+                              title: "내 녹음 재생",
+                              description: "녹음된 음성을 재생합니다.",
+                            });
+                          } else {
+                            handleWordRecording(word);
+                          }
+                        }}
+                        className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors shadow-md text-xs ${
+                          isRecording && recordingWordId === word.id.toString()
+                            ? 'bg-red-600 animate-pulse'
+                            : recordedAudios[`word_${word.id.toString()}`]
+                            ? 'bg-green-500 hover:bg-green-600'
+                            : 'bg-red-500 hover:bg-red-600'
+                        } text-white`}
+                        title={
+                          isRecording && recordingWordId === word.id.toString()
+                            ? "녹음 중단"
+                            : recordedAudios[`word_${word.id.toString()}`]
+                            ? "내 녹음 듣기"
+                            : "녹음하기"
+                        }
+                      >
+                        {isRecording && recordingWordId === word.id.toString()
+                          ? "⏹️"
+                          : recordedAudios[`word_${word.id.toString()}`]
+                          ? "▶️"
+                          : "🎤"
+                        }
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sentences Section */}
+          <div className="mt-8 border-t-2 border-gray-200 pt-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-green-700 flex items-center gap-2">
+                <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">S</span>
+                </div>
+                Sentences
+              </h3>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleStartSentences}
+                className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
+                  isPlaying
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
+                }`}
               >
-                {word.isFavorite ? <Heart className="w-4 h-4 fill-red-500 text-red-500" /> : <Heart className="w-4 h-4 text-gray-400" />}
-              </button>
-
-              {/* Learned Check */}
-              {word.isLearned && (
-                <div className="absolute top-1 left-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs">✓</span>
-                </div>
-              )}
-
-              {/* Recording Indicator */}
-              {recordedAudios[`word_${word.id.toString()}`] && (
-                <div className="absolute top-8 left-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs">🎤</span>
-                </div>
-              )}
-
-              {/* Word Content */}
-              <div className="text-center mt-3">
-                <div className="text-lg font-bold text-gray-800 mb-1">{word.text}</div>
-                <div className="text-xs text-gray-600">{word.meaning}</div>
-              </div>
-
-              {/* Word Recording Button */}
-              <div className="absolute bottom-1 right-1">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    
-                    if (recordedAudios[`word_${word.id.toString()}`] && !isRecording) {
-                      const audio = new Audio(recordedAudios[`word_${word.id.toString()}`]);
-                      audio.play();
-                      toast({
-                        title: "내 녹음 재생",
-                        description: "녹음된 음성을 재생합니다.",
-                      });
-                    } else {
-                      handleWordRecording(word);
-                    }
-                  }}
-                  className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors shadow-md text-xs ${
-                    isRecording && recordingWordId === word.id.toString()
-                      ? 'bg-red-600 animate-pulse'
-                      : recordedAudios[`word_${word.id.toString()}`]
-                      ? 'bg-green-500 hover:bg-green-600'
-                      : 'bg-red-500 hover:bg-red-600'
-                  } text-white`}
-                  title={
-                    isRecording && recordingWordId === word.id.toString()
-                      ? "녹음 중단"
-                      : recordedAudios[`word_${word.id.toString()}`]
-                      ? "내 녹음 듣기"
-                      : "녹음하기"
-                  }
-                >
-                  {isRecording && recordingWordId === word.id.toString()
-                    ? "⏹️"
-                    : recordedAudios[`word_${word.id.toString()}`]
-                    ? "▶️"
-                    : "🎤"
-                  }
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Sentences Section */}
-      <div className="mt-8 border-t-2 border-gray-200 pt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold text-green-700 flex items-center gap-2">
-            <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xs">S</span>
+                {isPlaying ? '⏹️ Stop' : '🎯 Start'}
+              </motion.button>
             </div>
-            Sentences
-          </h3>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleStartSentences}
-            className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-              isPlaying
-                ? 'bg-red-500 text-white hover:bg-red-600'
-                : 'bg-yellow-400 text-gray-800 hover:bg-yellow-500'
-            }`}
-          >
-            {isPlaying ? '⏹️ Stop' : '🎯 Start'}
-          </motion.button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {sentences.slice(0, 3).map((sentence) => (
-            <motion.div
-              key={sentence.id}
-              whileHover={{ scale: 1.02 }}
-              className={`relative p-4 rounded-xl transition-all border-2 ${
-                sentence.isLearned
-                  ? 'bg-green-50 border-green-200'
-                  : 'bg-orange-50 border-orange-200'
-              } ${
-                currentPlayingId === sentence.id.toString() ? 'ring-2 ring-orange-300' : ''
-              }`}
-            >
-              {/* Status Indicators */}
-              {sentence.isLearned && (
-                <div className="absolute top-3 left-3 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs">✓</span>
-                </div>
-              )}
-
-              {recordedAudios[sentence.id.toString()] && (
-                <div className="absolute top-3 right-12 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs">🎤</span>
-                </div>
-              )}
-
-              {/* Sentence Content */}
-              <div 
-                className="cursor-pointer hover:bg-white hover:bg-opacity-50 rounded-lg p-3 transition-colors min-h-[80px] flex items-center"
-                onClick={() => handleSentenceClick(sentence)}
-              >
-                <div className="text-center w-full">
-                  <div className="text-base font-semibold text-gray-800">{sentence.text}</div>
-                </div>
-              </div>
-
-              {/* Recording Button */}
-              <div className="absolute bottom-3 right-3">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    
-                    if (recordedAudios[sentence.id.toString()] && !isRecording) {
-                      const audio = new Audio(recordedAudios[sentence.id.toString()]);
-                      setPlayingAudioId(sentence.id.toString());
-                      
-                      audio.onended = () => {
-                        setPlayingAudioId(null);
-                        toast({
-                          title: "재생 완료",
-                          description: "녹음 재생이 완료되었습니다.",
-                        });
-                      };
-                      
-                      audio.play();
-                      toast({
-                        title: "내 녹음 재생",
-                        description: "녹음된 음성을 재생합니다.",
-                      });
-                    } else {
-                      handleSentenceRecording(sentence);
-                    }
-                  }}
-                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors shadow-md ${
-                    isRecording && recordingSentenceId === sentence.id.toString()
-                      ? 'bg-red-600 animate-pulse'
-                      : playingAudioId === sentence.id.toString()
-                      ? 'bg-blue-500 animate-pulse'
-                      : recordedAudios[sentence.id.toString()]
-                      ? 'bg-green-500 hover:bg-green-600'
-                      : 'bg-red-500 hover:bg-red-600'
-                  } text-white`}
-                  title={
-                    isRecording && recordingSentenceId === sentence.id.toString()
-                      ? "녹음 중단"
-                      : playingAudioId === sentence.id.toString()
-                      ? "재생 중..."
-                      : recordedAudios[sentence.id.toString()]
-                      ? "내 녹음 듣기"
-                      : "녹음하기"
-                  }
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {sentences.slice(0, 3).map((sentence) => (
+                <motion.div
+                  key={sentence.id}
+                  whileHover={{ scale: 1.02 }}
+                  className={`relative p-4 rounded-xl transition-all border-2 ${
+                    sentence.isLearned
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-orange-50 border-orange-200'
+                  } ${
+                    currentPlayingId === sentence.id.toString() ? 'ring-2 ring-orange-300' : ''
+                  }`}
                 >
-                  <span className="text-xs">
-                    {isRecording && recordingSentenceId === sentence.id.toString()
-                      ? '⏹️'
-                      : playingAudioId === sentence.id.toString()
-                      ? '🔊'
-                      : recordedAudios[sentence.id.toString()]
-                      ? '▶️'
-                      : '🎤'
-                    }
-                  </span>
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                  {/* Status Indicators */}
+                  {sentence.isLearned && (
+                    <div className="absolute top-3 left-3 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-xs">✓</span>
+                    </div>
+                  )}
+
+                  {recordedAudios[sentence.id.toString()] && (
+                    <div className="absolute top-3 right-12 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-xs">🎤</span>
+                    </div>
+                  )}
+
+                  {/* Sentence Content */}
+                  <div 
+                    className="cursor-pointer hover:bg-white hover:bg-opacity-50 rounded-lg p-3 transition-colors min-h-[80px] flex items-center"
+                    onClick={() => handleSentenceClick(sentence)}
+                  >
+                    <div className="text-center w-full">
+                      <div className="text-base font-semibold text-gray-800">{sentence.text}</div>
+                    </div>
+                  </div>
+
+                  {/* Recording Button */}
+                  <div className="absolute bottom-3 right-3">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        
+                        if (recordedAudios[sentence.id.toString()] && !isRecording) {
+                          const audio = new Audio(recordedAudios[sentence.id.toString()]);
+                          setPlayingAudioId(sentence.id.toString());
+                          
+                          audio.onended = () => {
+                            setPlayingAudioId(null);
+                            toast({
+                              title: "재생 완료",
+                              description: "녹음 재생이 완료되었습니다.",
+                            });
+                          };
+                          
+                          audio.play();
+                          toast({
+                            title: "내 녹음 재생",
+                            description: "녹음된 음성을 재생합니다.",
+                          });
+                        } else {
+                          handleSentenceRecording(sentence);
+                        }
+                      }}
+                      className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors shadow-md ${
+                        isRecording && recordingSentenceId === sentence.id.toString()
+                          ? 'bg-red-600 animate-pulse'
+                          : playingAudioId === sentence.id.toString()
+                          ? 'bg-blue-500 animate-pulse'
+                          : recordedAudios[sentence.id.toString()]
+                          ? 'bg-green-500 hover:bg-green-600'
+                          : 'bg-red-500 hover:bg-red-600'
+                      } text-white`}
+                      title={
+                        isRecording && recordingSentenceId === sentence.id.toString()
+                          ? "녹음 중단"
+                          : playingAudioId === sentence.id.toString()
+                          ? "재생 중..."
+                          : recordedAudios[sentence.id.toString()]
+                          ? "내 녹음 듣기"
+                          : "녹음하기"
+                      }
+                    >
+                      <span className="text-xs">
+                        {isRecording && recordingSentenceId === sentence.id.toString()
+                          ? '⏹️'
+                          : playingAudioId === sentence.id.toString()
+                          ? '🔊'
+                          : recordedAudios[sentence.id.toString()]
+                          ? '▶️'
+                          : '🎤'
+                        }
+                      </span>
+                    </motion.button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
