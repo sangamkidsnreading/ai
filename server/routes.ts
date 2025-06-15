@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import bcrypt from "bcryptjs";
 import { storage } from "./storage";
-import { loginSchema, insertUserSchema, insertWordSchema, insertSentenceSchema } from "@shared/schema";
+import { loginSchema, insertUserSchema, insertWordSchema, insertSentenceSchema, insertPronunciationAssessmentSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
