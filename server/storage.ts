@@ -8,7 +8,6 @@ import {
   userProgress,
   dayProgress,
   userStats,
-  pronunciationAssessments,
   type User,
   type InsertUser,
   type Word,
@@ -21,8 +20,6 @@ import {
   type InsertDayProgress,
   type UserStats,
   type InsertUserStats,
-  type PronunciationAssessment,
-  type InsertPronunciationAssessment,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -71,19 +68,6 @@ export interface IStorage {
     totalSentencesLearned: number;
     rank: number;
   }>>;
-
-  // Pronunciation assessment methods
-  createPronunciationAssessment(assessment: InsertPronunciationAssessment): Promise<PronunciationAssessment>;
-  getUserPronunciationAssessments(userId: number): Promise<PronunciationAssessment[]>;
-  getPronunciationAssessment(id: number): Promise<PronunciationAssessment | undefined>;
-  assessPronunciation(audioData: string, targetText: string, isWord: boolean): Promise<{
-    score: number;
-    feedback: string;
-    accuracy: number;
-    fluency: number;
-    completeness: number;
-    prosody: number;
-  }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -674,105 +658,6 @@ export class DatabaseStorage implements IStorage {
     }));
   }
 
-  // Pronunciation assessment methods
-  async createPronunciationAssessment(assessment: InsertPronunciationAssessment): Promise<PronunciationAssessment> {
-    const [created] = await db.insert(pronunciationAssessments).values(assessment).returning();
-    return created;
-  }
-
-  async getUserPronunciationAssessments(userId: number): Promise<PronunciationAssessment[]> {
-    return await db
-      .select()
-      .from(pronunciationAssessments)
-      .where(eq(pronunciationAssessments.userId, userId))
-      .orderBy(desc(pronunciationAssessments.assessedAt));
-  }
-
-  async getPronunciationAssessment(id: number): Promise<PronunciationAssessment | undefined> {
-    const [assessment] = await db
-      .select()
-      .from(pronunciationAssessments)
-      .where(eq(pronunciationAssessments.id, id));
-    return assessment || undefined;
-  }
-
-  async assessPronunciation(audioData: string, targetText: string, isWord: boolean): Promise<{
-    score: number;
-    feedback: string;
-    accuracy: number;
-    fluency: number;
-    completeness: number;
-    prosody: number;
-  }> {
-    // 실제 음성 인식 API를 사용할 수 있습니다 (예: Google Speech-to-Text, Azure Speech, AWS Transcribe)
-    // 여기서는 데모용 평가 로직을 구현합니다
-    
-    try {
-      // 오디오 데이터 길이 기반 기본 평가
-      const audioLength = audioData.length;
-      const targetLength = targetText.length;
-      
-      // 기본 점수 계산 (실제로는 음성 인식 API 결과를 사용)
-      let baseScore = Math.min(90, Math.max(50, 80 - Math.abs(targetLength * 100 - audioLength) / 1000));
-      
-      // 단어와 문장에 대한 다른 평가 기준
-      if (isWord) {
-        // 단어의 경우 정확성에 더 집중
-        const accuracy = Math.min(95, baseScore + Math.random() * 10);
-        const fluency = Math.min(90, accuracy - 5 + Math.random() * 10);
-        const completeness = Math.min(95, accuracy);
-        const prosody = Math.min(85, fluency - 5 + Math.random() * 15);
-        const score = Math.round((accuracy + fluency + completeness + prosody) / 4);
-        
-        let feedback = "";
-        if (score >= 90) feedback = "훌륭한 발음입니다! 매우 정확하게 발음하셨네요.";
-        else if (score >= 80) feedback = "좋은 발음입니다. 조금 더 연습하면 완벽해질 것 같아요.";
-        else if (score >= 70) feedback = "괜찮은 발음이에요. 좀 더 명확하게 발음해보세요.";
-        else feedback = "발음 연습이 더 필요해요. 천천히 따라해보세요.";
-        
-        return {
-          score: Math.round(score),
-          feedback,
-          accuracy: Math.round(accuracy),
-          fluency: Math.round(fluency),
-          completeness: Math.round(completeness),
-          prosody: Math.round(prosody),
-        };
-      } else {
-        // 문장의 경우 유창성과 자연스러움에 더 집중
-        const fluency = Math.min(95, baseScore + Math.random() * 15);
-        const accuracy = Math.min(90, fluency - 5 + Math.random() * 10);
-        const prosody = Math.min(95, fluency - 3 + Math.random() * 10);
-        const completeness = Math.min(90, Math.min(accuracy, fluency));
-        const score = Math.round((accuracy + fluency + completeness + prosody) / 4);
-        
-        let feedback = "";
-        if (score >= 90) feedback = "매우 자연스럽고 유창한 발음입니다! 완벽해요!";
-        else if (score >= 80) feedback = "자연스러운 발음이에요. 리듬감이 좋습니다.";
-        else if (score >= 70) feedback = "발음이 괜찮아요. 조금 더 자연스럽게 말해보세요.";
-        else feedback = "문장의 리듬과 억양을 더 연습해보세요.";
-        
-        return {
-          score: Math.round(score),
-          feedback,
-          accuracy: Math.round(accuracy),
-          fluency: Math.round(fluency),
-          completeness: Math.round(completeness),
-          prosody: Math.round(prosody),
-        };
-      }
-    } catch (error) {
-      // 오류 발생 시 기본 점수 반환
-      return {
-        score: 60,
-        feedback: "발음 평가 중 오류가 발생했습니다. 다시 시도해주세요.",
-        accuracy: 60,
-        fluency: 60,
-        completeness: 60,
-        prosody: 60,
-      };
-    }
-  }
 }
 
 export const storage = new DatabaseStorage();

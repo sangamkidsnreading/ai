@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import bcrypt from "bcryptjs";
 import { storage } from "./storage";
-import { loginSchema, insertUserSchema, insertWordSchema, insertSentenceSchema, insertPronunciationAssessmentSchema } from "@shared/schema";
+import { loginSchema, insertUserSchema, insertWordSchema, insertSentenceSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
@@ -340,65 +340,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(leaderboard);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch leaderboard" });
-    }
-  });
-
-  // Pronunciation assessment routes
-  app.post("/api/pronunciation/assess", async (req, res) => {
-    try {
-      const { userId, wordId, sentenceId, audioData, targetText } = req.body;
-      
-      if (!userId || !audioData || !targetText) {
-        return res.status(400).json({ message: "Missing required fields" });
-      }
-
-      // Get pronunciation assessment
-      const assessment = await storage.assessPronunciation(audioData, targetText, !!wordId);
-      
-      // Save assessment to database
-      const savedAssessment = await storage.createPronunciationAssessment({
-        userId,
-        wordId: wordId || null,
-        sentenceId: sentenceId || null,
-        audioData,
-        score: assessment.score,
-        feedback: assessment.feedback,
-        accuracy: assessment.accuracy,
-        fluency: assessment.fluency,
-        completeness: assessment.completeness,
-        prosody: assessment.prosody,
-      });
-
-      res.json({
-        assessmentId: savedAssessment.id,
-        ...assessment,
-      });
-    } catch (error) {
-      console.error("Pronunciation assessment error:", error);
-      res.status(500).json({ message: "Failed to assess pronunciation" });
-    }
-  });
-
-  app.get("/api/users/:userId/pronunciation-assessments", async (req, res) => {
-    try {
-      const userId = parseInt(req.params.userId);
-      const assessments = await storage.getUserPronunciationAssessments(userId);
-      res.json(assessments);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch pronunciation assessments" });
-    }
-  });
-
-  app.get("/api/pronunciation-assessments/:id", async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const assessment = await storage.getPronunciationAssessment(id);
-      if (!assessment) {
-        return res.status(404).json({ message: "Assessment not found" });
-      }
-      res.json(assessment);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch pronunciation assessment" });
     }
   });
 

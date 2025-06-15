@@ -64,20 +64,7 @@ export const userStats = pgTable("user_stats", {
   lastLoginDate: text("last_login_date"), // ISO date string
 });
 
-export const pronunciationAssessments = pgTable("pronunciation_assessments", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
-  wordId: integer("word_id"),
-  sentenceId: integer("sentence_id"),
-  audioData: text("audio_data").notNull(), // base64 encoded audio
-  score: integer("score"), // 0-100 pronunciation score
-  feedback: text("feedback"), // pronunciation feedback
-  accuracy: integer("accuracy"), // pronunciation accuracy score
-  fluency: integer("fluency"), // fluency score
-  completeness: integer("completeness"), // completeness score
-  prosody: integer("prosody"), // prosody score
-  assessedAt: timestamp("assessed_at").defaultNow(),
-});
+
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
@@ -107,11 +94,6 @@ export const insertUserStatsSchema = createInsertSchema(userStats).omit({
   id: true,
 });
 
-export const insertPronunciationAssessmentSchema = createInsertSchema(pronunciationAssessments).omit({
-  id: true,
-  assessedAt: true,
-});
-
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -125,8 +107,6 @@ export type DayProgress = typeof dayProgress.$inferSelect;
 export type InsertDayProgress = z.infer<typeof insertDayProgressSchema>;
 export type UserStats = typeof userStats.$inferSelect;
 export type InsertUserStats = z.infer<typeof insertUserStatsSchema>;
-export type PronunciationAssessment = typeof pronunciationAssessments.$inferSelect;
-export type InsertPronunciationAssessment = z.infer<typeof insertPronunciationAssessmentSchema>;
 
 // Login schema
 export const loginSchema = z.object({

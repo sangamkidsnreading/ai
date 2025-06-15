@@ -4,7 +4,6 @@ import { useLearningStore } from '@/stores/learningStore';
 import { useAuthStore } from '@/stores/authStore';
 import { Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
 
 export default function LearningPageUnified() {
   const { toast } = useToast();
@@ -35,8 +34,6 @@ export default function LearningPageUnified() {
   const [recordedAudios, setRecordedAudios] = useState<{[key: string]: string}>({});
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
-  const [pronunciationResults, setPronunciationResults] = useState<{[key: string]: any}>({});
-  const [isAssessing, setIsAssessing] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
