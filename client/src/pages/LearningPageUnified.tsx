@@ -4,6 +4,7 @@ import { useLearningStore } from '@/stores/learningStore';
 import { useAuthStore } from '@/stores/authStore';
 import { Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 
 export default function LearningPageUnified() {
   const { toast } = useToast();
@@ -33,6 +34,8 @@ export default function LearningPageUnified() {
   const [recordedAudios, setRecordedAudios] = useState<{[key: string]: string}>({});
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
+  const [pronunciationResults, setPronunciationResults] = useState<{[key: string]: any}>({});
+  const [isAssessing, setIsAssessing] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -117,6 +120,60 @@ export default function LearningPageUnified() {
     speechSynthesis.speak(utterance);
   };
 
+  // 발음 평가 함수
+  const assessPronunciation = async (audioBlob: Blob, targetText: string, isWord: boolean, itemId: number) => {
+    if (!currentUser) return;
+    
+    setIsAssessing(true);
+    try {
+      // Convert blob to base64
+      const reader = new FileReader();
+      const audioDataPromise = new Promise<string>((resolve) => {
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          resolve(base64.split(',')[1]); // Remove data:audio/wav;base64, prefix
+        };
+      });
+      reader.readAsDataURL(audioBlob);
+      const audioData = await audioDataPromise;
+
+      const response = await fetch('/api/pronunciation/assess', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          wordId: isWord ? itemId : null,
+          sentenceId: isWord ? null : itemId,
+          audioData,
+          targetText,
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setPronunciationResults(prev => ({
+          ...prev,
+          [itemId.toString()]: result
+        }));
+        
+        toast({
+          title: "발음 평가 완료",
+          description: `점수: ${result.score}점 - ${result.feedback}`,
+        });
+      }
+    } catch (error) {
+      console.error('Pronunciation assessment error:', error);
+      toast({
+        title: "평가 오류",
+        description: "발음 평가 중 오류가 발생했습니다.",
+      });
+    } finally {
+      setIsAssessing(false);
+    }
+  };
+
   const handleSentenceRecording = async (sentence: any) => {
     if (isRecording && recordingSentenceId === sentence.id.toString()) {
       if (mediaRecorder) {
@@ -145,7 +202,7 @@ export default function LearningPageUnified() {
         audioChunks.push(event.data);
       };
 
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
         
@@ -156,8 +213,11 @@ export default function LearningPageUnified() {
 
         toast({
           title: "녹음 완료",
-          description: `"${sentence.text}" 녹음이 완료되었습니다.`,
+          description: `"${sentence.text}" 녹음이 완료되었습니다. 발음을 평가 중...`,
         });
+
+        // 발음 평가 자동 실행
+        await assessPronunciation(audioBlob, sentence.text, false, sentence.id);
 
         stream.getTracks().forEach(track => track.stop());
       };
@@ -515,6 +575,24 @@ export default function LearningPageUnified() {
                     </div>
                   )}
 
+                  {/* Pronunciation Score */}
+                  {pronunciationResults[sentence.id.toString()] && (
+                    <div className="absolute top-10 right-3 bg-white border border-gray-200 rounded-lg p-2 shadow-sm min-w-[120px]">
+                      <div className="text-xs font-semibold text-center mb-1">
+                        점수: {pronunciationResults[sentence.id.toString()].score}점
+                      </div>
+                      <div className="grid grid-cols-2 gap-1 text-xs">
+                        <div>정확도: {pronunciationResults[sentence.id.toString()].accuracy}</div>
+                        <div>유창성: {pronunciationResults[sentence.id.toString()].fluency}</div>
+                        <div>완성도: {pronunciationResults[sentence.id.toString()].completeness}</div>
+                        <div>억양: {pronunciationResults[sentence.id.toString()].prosody}</div>
+                      </div>
+                      <div className="text-xs text-gray-600 mt-1 text-center">
+                        {pronunciationResults[sentence.id.toString()].feedback}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Sentence Content */}
                   <div 
                     className="cursor-pointer hover:bg-white hover:bg-opacity-50 rounded-lg p-3 transition-colors min-h-[80px] flex items-center"
@@ -525,6 +603,13 @@ export default function LearningPageUnified() {
                     </div>
                   </div>
                   
+                  {/* Assessment Loading Indicator */}
+                  {isAssessing && (
+                    <div className="absolute bottom-12 right-3 bg-blue-100 border border-blue-300 rounded-lg p-2 text-xs text-blue-700">
+                      평가 중...
+                    </div>
+                  )}
+
                   {/* Recording Button */}
                   <div className="absolute bottom-3 right-3">
                     <motion.button
