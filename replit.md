@@ -128,9 +128,42 @@ This is a full-stack English vocabulary learning application called "키리보�
 - Database URL configured via environment variables
 - Session secrets and other sensitive data via environment
 
+## Recent Changes
+
+### Railway Deployment Preparation (July 02, 2025)
+- Added Railway configuration files (railway.json, Procfile)
+- Updated server port configuration for Railway hosting
+- Added health check endpoint (/api/health)
+- Created deployment guide (DEPLOYMENT.md)
+- Updated .gitignore for production deployment
+- Environment variable configuration prepared
+
+### Architecture Updates for Production
+- Modified Express server to use Railway's PORT environment variable
+- Added production-ready health monitoring
+- Prepared database migration strategy for Railway PostgreSQL
+- Optimized build process for cloud deployment
+
+## Deployment Strategy
+
+### Railway Deployment (Current Plan)
+- **Hosting**: Railway.app with GitHub integration
+- **Database**: Railway PostgreSQL service
+- **Cost**: Starting at $5/month, scaling with usage
+- **Features**: Auto-deployment, environment variables, health checks
+- **Build Process**: npm run build → npm start
+- **Environment**: Production-optimized Express + static file serving
+
+### Future Scaling Considerations
+- Current setup supports up to ~1,000 users on basic plan
+- Larger scale (10,000+ users) may require migration to AWS/GCP
+- CDN integration planned for cost optimization
+- Database optimization strategies prepared
+
 ## Changelog
-- July 02, 2025. Initial setup
+- July 02, 2025. Initial setup and Railway deployment preparation
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Project priority: Cost-effective deployment with future scalability for Bubble app integration.

@@ -5,6 +5,11 @@ import { storage } from "./storage";
 import { loginSchema, insertUserSchema, insertWordSchema, insertSentenceSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check for Railway
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
   // Auth routes
   app.post("/api/auth/login", async (req, res) => {
     try {
